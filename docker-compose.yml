@@ -1,0 +1,18 @@
+services:
+  nginx:
+    build: ./nginxServer
+    ports:
+      - "80:80"
+    volumes:
+      - shared_volume:/usr/share/nginx/html/images
+  djangoserver:
+    build: ./djangoServer
+    ports:
+      - "8000:8000"
+    volumes:
+      - shared_volume:/app/muestras
+      - sqlite_volume:/app/db
+volumes:
+  shared_volume:
+  sqlite_volume:
+
