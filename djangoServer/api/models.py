@@ -33,3 +33,4 @@ def delete_image(sender, instance, **kwargs):
                 print(f"Imagen {image_path} eliminada con éxito.")
             except Exception as e:
                 print(f"Error al eliminar la imagen {image_path}: {e}")
+
