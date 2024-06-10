@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Imágenes</title>
+</head>
+<body>
+    <h1>Lista de Imágenes</h1>
+    <ul>
+        {% for imagen in imagenes %}
+            <li>{{ imagen.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
