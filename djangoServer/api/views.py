@@ -1,15 +1,15 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .serializer import MuestraSerializer
-from .models import Muestra
+from .serializer import CapturaSerializer
+from .models import Captura
 from django.http import HttpResponse
 
 # Create your views here.
-class MuestraViewSet(viewsets.ModelViewSet):
-    queryset = Muestra.objects.all()
-    serializer_class = MuestraSerializer
+class CapturaViewSet(viewsets.ModelViewSet):
+    queryset = Captura.objects.all()
+    serializer_class = CapturaSerializer
 
 
 def lista_imagenes(request):
-    imagenes = Muestra.objects.all()
+    imagenes = Captura.objects.all()
     return render(request, 'lista_imagenes.html', {'imagenes': imagenes})

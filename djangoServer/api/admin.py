@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Muestra
+from .models import *
 
 class MuestraAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'get_filename')
@@ -14,4 +14,10 @@ class MuestraAdmin(admin.ModelAdmin):
         self.fields = ('name', 'image', 'get_filename')  # Agrega 'get_filename' al formulario de cambio
         return super().change_view(request, object_id, form_url, extra_context)
 
-admin.site.register(Muestra, MuestraAdmin)
+admin.site.register(Captura,MuestraAdmin)
+admin.site.register(Curso)
+admin.site.register(Ayudante)
+admin.site.register(Categoria)
+admin.site.register(Muestra)
+admin.site.register(Lote)
+admin.site.register(Alumno)
