@@ -32,7 +32,7 @@ class Ayudante(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
     passhash = models.CharField(max_length=100, verbose_name="Hash")
     correo = models.CharField(max_length=100, verbose_name="Correo")
-    curso = models.ManyToManyField(Curso)
+    curso = models.ManyToManyField(Curso,null=True, blank=True)
 
     def __str__(self):
         return f"Ayudante: {self.nombre} ({self.correo})"
@@ -51,7 +51,7 @@ class Sistema(models.Model):
     
 class Organo(models.Model):
     orgname = models.CharField(max_length=100, verbose_name="Nombre del organo")
-    sistema = models.ManyToManyField(Sistema)
+    sistema = models.ManyToManyField(Sistema,null=True, blank=True)
 
     def __str__(self):
         return f"Órgano: {self.orgname}"
@@ -60,7 +60,7 @@ class Muestra(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
     Categoria = models.ManyToManyField(Categoria)
     curso = models.ManyToManyField(Curso, through='Lote')
-    organo = models.ManyToManyField(Organo)
+    organo = models.ManyToManyField(Organo,null=True, blank=True)
 
     def __str__(self):
         return f"Muestra: {self.name}"
@@ -77,8 +77,8 @@ class Alumno(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre")
     passhash = models.CharField(max_length=100, verbose_name="Hash")
     correo = models.CharField(max_length=100, verbose_name="Correo")
-    curso = models.ManyToManyField(Curso)
-    permiso = models.ManyToManyField(Muestra)
+    curso = models.ManyToManyField(Curso,null=True, blank=True)
+    permiso = models.ManyToManyField(Muestra,null=True, blank=True)
 
     def __str__(self):
         return f"Alumno: {self.nombre} ({self.correo})"
