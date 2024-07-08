@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 
-class MuestraAdmin(admin.ModelAdmin):
+""" class MuestraAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'get_filename')
     readonly_fields = ('get_filename',)  # Agrega el campo como de solo lectura
 
@@ -11,10 +11,10 @@ class MuestraAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         # Asegúrate de que se muestre el campo en la vista de cambio de cada objeto
-        self.fields = ('name', 'image', 'get_filename')  # Agrega 'get_filename' al formulario de cambio
-        return super().change_view(request, object_id, form_url, extra_context)
+        self.fields = (__all__,'get_filename')  # Agrega 'get_filename' al formulario de cambio
+        return super().change_view(request, object_id, form_url, extra_context) """
 
-admin.site.register(Captura,MuestraAdmin)
+admin.site.register(Captura)
 admin.site.register(Curso)
 admin.site.register(Ayudante)
 admin.site.register(Categoria)
@@ -24,3 +24,4 @@ admin.site.register(Alumno)
 admin.site.register(Profesor)
 admin.site.register(Organo)
 admin.site.register(Sistema)
+admin.site.register(Notas)
