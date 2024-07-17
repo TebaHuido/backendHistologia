@@ -15,13 +15,9 @@ from .models import *
         return super().change_view(request, object_id, form_url, extra_context) """
 
 admin.site.register(Captura)
-admin.site.register(Curso)
-admin.site.register(Ayudante)
 admin.site.register(Categoria)
 admin.site.register(Muestra)
 admin.site.register(Lote)
-admin.site.register(Alumno)
-admin.site.register(Profesor)
 admin.site.register(Organo)
 admin.site.register(Sistema)
 admin.site.register(Notas)
