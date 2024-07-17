@@ -4,13 +4,13 @@ services:
     ports:
       - "4201:4200"
   nginx:
-    build: ./nginxServer
+    image: minero420/nginxhistologia:online
     ports:
       - "8011:80"
     volumes:
       - shared_volume:/usr/share/nginx/html/images
   djangoserver:
-    build: ./djangoServer
+    image: minero420/djangohistologia:online
     ports:
       - "8010:8000"
     volumes:
