@@ -1,8 +1,8 @@
 services:
   angular:
-    image: minero420/angudocker:angular-docker
+    image: minero420/angudocker:angular-docker-online
     ports:
-      - "4200:4200"
+      - "4201:4200"
   nginx:
     build: ./nginxServer
     ports:
