@@ -1,14 +1,18 @@
 services:
-  nginx:
-    build: ./nginxServer
+  angular:
+    image: minero420/angudocker:angular-docker-online
     ports:
-      - "80:80"
+      - "4201:4200"
+  nginx:
+    image: minero420/nginxhistologia:online
+    ports:
+      - "8011:80"
     volumes:
       - shared_volume:/usr/share/nginx/html/images
   djangoserver:
-    build: ./djangoServer
+    image: minero420/djangohistologia:online
     ports:
-      - "8000:8000"
+      - "8010:8000"
     volumes:
       - shared_volume:/app/muestras
       - sqlite_volume:/app/db
