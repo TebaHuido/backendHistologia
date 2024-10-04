@@ -5,6 +5,9 @@ from .serializer import MuestraSerializer2,NotaSerializer, CapturaSerializer, Pr
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import status
+from django.http import JsonResponse
 # Create your views here.
 from rest_framework import viewsets
 
@@ -20,20 +23,30 @@ class CapturaViewSet(viewsets.ReadOnlyModelViewSet):
 class MuestraViewSet(viewsets.ModelViewSet):
     queryset = Muestra.objects.all()
     serializer_class = MuestraSerializer
-
+    parser_classes = (MultiPartParser, FormParser)
     @action(detail=False, methods=['get'])
     def por_categoria(self, request):
         categoria_name = request.query_params.get('category', None)
-        
+
+        if not categoria_name:
+            return Response({"error": "Categoría no proporcionada"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Caso especial para devolver todas las muestras sin filtrar
         if categoria_name == 'all':
-            muestras = self.queryset.all()
-        elif categoria_name is not None:
-            muestras = self.queryset.filter(Categoria__name__icontains=categoria_name)
-        else:
-            return Response({"error": "No se ha proporcionado una categoría"}, status=status.HTTP_400_BAD_REQUEST)
+            muestras = Muestra.objects.all()
+            serializer = self.get_serializer(muestras, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Manejo del resto de las categorías
+        try:
+            categoria = Categoria.objects.get(name=categoria_name)
+            muestras = Muestra.objects.filter(Categoria=categoria)
+        except Categoria.DoesNotExist:
+            return Response({"error": "Categoría no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.get_serializer(muestras, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 def lista_capturas_muestra(request, muestra_id):
     muestra = get_object_or_404(Muestra, id=muestra_id)
     capturas = Captura.objects.filter(muestra=muestra)
@@ -85,6 +98,9 @@ class OrganoViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrganoSerializer
 
 class MuestraViewSet2(viewsets.ReadOnlyModelViewSet):
+    def post(self, request, *args, **kwargs):
+        # Tu lógica aquí
+        return JsonResponse({'status': 'success'})
     queryset = Muestra.objects.all()
     serializer_class = MuestraSerializer
 

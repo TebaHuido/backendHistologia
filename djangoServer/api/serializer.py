@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+
 class ProfesorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profesor
@@ -49,7 +50,7 @@ class MuestraSerializer(serializers.ModelSerializer):
                 relative_url = relative_url[len('/muestras/'):]  # Elimina 'muestras/' del inicio
             
             # Construir manualmente la URL completa
-            server_url = 'http://tebadev.sytes.net:8011/images'  # Ajusta el dominio y puerto según tu configuración
+            server_url = 'http://64.176.14.43:8011/images'  # Ajusta el dominio y puerto según tu configuración
             full_url = f"{server_url}/{relative_url}"  # Combina el dominio con la URL relativa corregida
             return full_url
         return None
@@ -71,24 +72,15 @@ class AlumnoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CapturaSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
+    # Aquí incluimos los campos necesarios para subir las capturas desde el frontend.
     class Meta:
         model = Captura
-        fields = ('id', 'name', 'image')  # Ajusta según tus necesidades
-
-    def get_image(self, obj):
-        relative_url = obj.image.url
-        if relative_url.startswith('/muestras/'):
-            relative_url = relative_url[len('/muestras/'):]
-        server_url = 'http://tebadev.sytes.net:8011/images'
-        full_url = f"{server_url}/{relative_url}"
-        return full_url
+        fields = ('id', 'name', 'image', 'muestra_id', 'aumento')  # Agregar 'image' y otros campos necesarios.
 
 class NotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notas
-        fields = ('id', 'nota',)  # Ajusta según tus necesidades
+        fields = ('id', 'nota',)  # Ajustar para subir notas
 
 class MuestraSerializer2(serializers.ModelSerializer):
     capturas = serializers.SerializerMethodField()
