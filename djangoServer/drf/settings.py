@@ -55,10 +55,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = (
-    'http://64.176.14.43:4201',
+    'http://localhost:4201',
 )
 CORS_ALLOWED_ORIGINS = [
-    "http://64.176.14.43:4201",
+    "http://localhost:4201",
 ]
 ROOT_URLCONF = 'drf.urls'
 
