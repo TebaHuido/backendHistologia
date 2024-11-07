@@ -14,54 +14,52 @@ import os
 from PIL import Image, PngImagePlugin
 import uuid
 from rest_framework.parsers import MultiPartParser, FormParser
+import numpy as np
+from django.http import FileResponse
+from io import BytesIO
+
 
 class ProcesarImagenAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, format=None):
-        # Depuración: Imprimir archivos recibidos
-        print("Archivos recibidos:", request.FILES)
-
         # Verificar si se ha subido un archivo con la clave 'imagen'
         if 'imagen' not in request.FILES:
             return Response({"error": "No se ha subido ninguna imagen."}, status=status.HTTP_400_BAD_REQUEST)
         
         imagen = request.FILES['imagen']
         
-        # Guardar la imagen original en una ubicación temporal
-        nombre_unico = f"{uuid.uuid4()}_{imagen.name}"
-        ruta_original = os.path.join(settings.MEDIA_ROOT, 'originales', nombre_unico)
-        
-        # Asegurarse de que el directorio existe
-        os.makedirs(os.path.dirname(ruta_original), exist_ok=True)
-        
-        # Guardar la imagen
-        with open(ruta_original, 'wb+') as destino:
-            for chunk in imagen.chunks():
-                destino.write(chunk)
-        
-        # Procesar la imagen con Haar Cascade
+        # Obtener parámetros de procesamiento desde el cuerpo de la solicitud o usar valores predeterminados
+        scaleFactor = float(request.data.get('scaleFactor', 1.01))  # Valor predeterminado 1.01
+        minNeighbors = int(request.data.get('minNeighbors', 5))     # Valor predeterminado 5
+        minSize = tuple(map(int, request.data.get('minSize', '5,5').split(',')))  # Valor predeterminado (5, 5)
+        maxSize = tuple(map(int, request.data.get('maxSize', '500,500').split(',')))  # Valor predeterminado (500, 500)
+        shrink_factor = float(request.data.get('shrink_factor', 0.85))  # Valor predeterminado 0.85
+
+        # Procesar la imagen y devolverla sin guardarla en el disco
         try:
-            ruta_procesada, detecciones = self.procesar_imagen(ruta_original)
+            imagen_procesada, detecciones = self.procesar_imagen(
+                imagen,
+                scaleFactor=scaleFactor,
+                minNeighbors=minNeighbors,
+                minSize=minSize,
+                maxSize=maxSize,
+                shrink_factor=shrink_factor
+            )
         except Exception as e:
-            # Eliminar la imagen original en caso de error
-            os.remove(ruta_original)
             print(f"Error al procesar la imagen: {str(e)}")  # Depuración
             return Response({"error": f"Error al procesar la imagen: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        # Generar la URL pública de la imagen procesada
-        url_procesada = request.build_absolute_uri(settings.MEDIA_URL + ruta_procesada)
+        # Preparar la imagen para ser devuelta como respuesta
+        response = FileResponse(imagen_procesada, content_type='image/png')
+        response['Content-Disposition'] = 'inline; filename="imagen_procesada.png"'
         
-        # Retornar la URL y los metadatos de detección
-        response_data = {
-            "imagen_original": request.build_absolute_uri(settings.MEDIA_URL + 'originales/' + nombre_unico),
-            "imagen_procesada": url_procesada,
-            "metadata": detecciones
-        }
+        # Agregar detecciones en el cuerpo de la respuesta
+        response['detecciones'] = detecciones
         
-        return Response(response_data, status=status.HTTP_200_OK)
-    
-    def procesar_imagen(self, imagen_path, cascada_path=None, scaleFactor=1.07, minNeighbors=15, minSize=(15, 15), shrink_factor=0.85):
+        return response
+
+    def procesar_imagen(self, imagen_file, cascada_path=None, scaleFactor=1.01, minNeighbors=5, minSize=(5, 5), maxSize=(500,500), shrink_factor=0.85):
         # Verificar si el archivo de cascada existe
         if cascada_path is None:
             cascada_path = os.path.join(settings.BASE_DIR, 'api', 'cascades', 'cascade2.xml')
@@ -72,8 +70,8 @@ class ProcesarImagenAPIView(APIView):
         # Cargar el clasificador Haar Cascade
         cascada = cv2.CascadeClassifier(cascada_path)
         
-        # Cargar la imagen
-        imagen = cv2.imread(imagen_path)
+        # Cargar la imagen desde el archivo en memoria
+        imagen = cv2.imdecode(np.frombuffer(imagen_file.read(), np.uint8), cv2.IMREAD_COLOR)
         if imagen is None:
             raise ValueError("No se pudo cargar la imagen.")
         
@@ -89,6 +87,11 @@ class ProcesarImagenAPIView(APIView):
             flags=cv2.CASCADE_SCALE_IMAGE
         )
         
+        # Filtrar objetos según el tamaño máximo, si se proporciona
+        if maxSize is not None:
+            max_width, max_height = maxSize
+            objetos = [(x, y, w, h) for (x, y, w, h) in objetos if w <= max_width and h <= max_height]
+
         # Dibujar rectángulos más pequeños alrededor de los objetos detectados
         for (x, y, w, h) in objetos:
             new_w = int(w * shrink_factor)
@@ -97,22 +100,17 @@ class ProcesarImagenAPIView(APIView):
             new_y = y + (h - new_h) // 2
             cv2.rectangle(imagen, (new_x, new_y), (new_x + new_w, new_y + new_h), (255, 0, 0), 2)
         
-        # Generar un nombre de archivo único para la imagen procesada
-        nombre_unico = f"{uuid.uuid4()}.png"
+        # Convertir la imagen a formato PNG en memoria
+        _, buffer = cv2.imencode('.png', imagen)
+        imagen_procesada = BytesIO(buffer)
+
+        # Metadatos personalizados para las detecciones
+        detecciones = [{"x": int(x), "y": int(y), "w": int(w), "h": int(h)} for (x, y, w, h) in objetos]
         
-        # Guardar la imagen procesada con OpenCV
-        cv2.imwrite(nombre_unico, imagen)
-        
-        # Metadatos personalizados
-        detecciones = [{
-            "x": int(x),
-            "y": int(y),
-            "w": int(w),
-            "h": int(h)
-        } for (x, y, w, h) in objetos]
-        
-        # Retornar la ruta relativa y las detecciones
-        return nombre_unico, detecciones
+        # Retornar la imagen procesada y las detecciones
+        return imagen_procesada, detecciones
+
+
 
 
 class MuestraDetailAPIView(generics.RetrieveAPIView):

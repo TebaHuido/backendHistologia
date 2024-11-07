@@ -23,10 +23,10 @@
         <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for captura in capturas %}
                 <li class="bg-white rounded-lg shadow-lg p-4">
-                    <a href="http://localhost/images/{{ captura.get_filename }}" class="text-blue-500 hover:underline">
+                    <a href="http://histologia.sytes.net/images/{{ captura.get_filename }}" class="text-blue-500 hover:underline">
                         <h2 class="text-xl font-semibold mb-2">{{ captura.name }}</h2>
                     </a>
-                    <img src="http://localhost/images/{{ captura.get_filename }}" alt="{{ captura.name }}" class="w-full h-64 object-cover rounded-md">
+                    <img src="http://histologia.sytes.net/images/{{ captura.get_filename }}" alt="{{ captura.name }}" class="w-full h-64 object-cover rounded-md">
                     <p class="text-gray-700 mt-2">Aumento: {{ captura.aumento }}</p>
                 </li>
             {% endfor %}
