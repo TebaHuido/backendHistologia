@@ -62,7 +62,7 @@ class MuestraSerializer(serializers.ModelSerializer):
                 relative_url = relative_url[len('/muestras/'):]  # Elimina 'muestras/' del inicio
             
             # Construir manualmente la URL completa
-            server_url = 'http://histologia.sytes.net:8011/images'  # Ajusta el dominio y puerto según tu configuración
+            server_url = 'http://localhost:8011/images'  # Ajusta el dominio y puerto según tu configuración
             full_url = f"{server_url}/{relative_url}"  # Combina el dominio con la URL relativa corregida
             return full_url
         return None

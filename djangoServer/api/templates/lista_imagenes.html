@@ -19,7 +19,7 @@
                     <a href="/lista_capturas_muestra/{{ imagen.muestra.id }}" class="text-blue-500 hover:underline">
                         <h2 class="text-xl font-semibold mb-2">{{ imagen.muestra.name }}</h2>
                     </a>
-                    <img src="http://histologia.sytes.net/images/{{ imagen.get_filename }}" alt="{{ imagen.muestra.name }}" class="w-full h-64 object-cover rounded-md">
+                    <img src="http://localhost/images/{{ imagen.get_filename }}" alt="{{ imagen.muestra.name }}" class="w-full h-64 object-cover rounded-md">
                 </li>
             {% endfor %}
         </ul>

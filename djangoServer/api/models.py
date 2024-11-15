@@ -64,7 +64,7 @@ class Muestra(models.Model):
     Categoria = models.ManyToManyField(Categoria)
     curso = models.ManyToManyField(Curso, through='Lote')
     organo = models.ManyToManyField(Organo, blank=True)
-
+    tinsion = models.CharField(max_length=100, verbose_name="Tinsion")
     def __str__(self):
         return f"Muestra: {self.name}"
 
@@ -87,6 +87,7 @@ class Alumno(models.Model):
         return f"Alumno: {self.nombre} ({self.correo})"
     
 class Captura(models.Model):
+    escala = models.FloatField(default=0.0,null=True, blank=True)
     aumento = models.FloatField(default=0.0,null=True, blank=True)
     name = models.CharField(default=default_name ,max_length=100, verbose_name="Nombre")
     image = models.ImageField(upload_to=generate_filename, null=False, blank=False, verbose_name="Captura")
