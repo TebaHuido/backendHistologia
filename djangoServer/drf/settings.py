@@ -55,10 +55,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = (
-    'http://tebadev.sytes.net:4201',
+    'http://localhost:4200',
 )
 CORS_ALLOWED_ORIGINS = [
-    "http://tebadev.sytes.net:4201",
+    "http://localhost:4200",
 ]
 ROOT_URLCONF = 'drf.urls'
 

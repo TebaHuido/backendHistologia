@@ -1,6 +1,6 @@
 services:
   angular:
-    image: minero420/angudocker:angular-docker-online
+    image: minero420/angular:local
     ports:
       - "4201:4200"
   nginx:
@@ -10,7 +10,7 @@ services:
     volumes:
       - shared_volume:/usr/share/nginx/html/images
   djangoserver:
-    image: minero420/djangohistologia:online
+    image: minero420/django:local
     ports:
       - "8010:8000"
     volumes:
