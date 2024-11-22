@@ -4,6 +4,10 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+
+
+
+
 def generate_filename(instance, filename):
     extension = filename.split('.')[-1]
     new_filename = f"{uuid.uuid4()}.{extension}"
@@ -64,7 +68,7 @@ class Muestra(models.Model):
     Categoria = models.ManyToManyField(Categoria)
     curso = models.ManyToManyField(Curso, through='Lote')
     organo = models.ManyToManyField(Organo, blank=True)
-
+    tincion = models.ManyToManyField('Tincion', blank=True)
     def __str__(self):
         return f"Muestra: {self.name}"
 
@@ -123,3 +127,10 @@ class Notas(models.Model):
     class Meta:
         verbose_name = "Nota"
         verbose_name_plural = "Notas"
+class Tincion(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Nombre")
+    descripcion = models.CharField(max_length=1000, verbose_name="Descripcion")
+    captura = models.ManyToManyField(Captura, blank=True)
+
+    def __str__(self):
+        return f"Tinción: {self.name} ({self.descripcion})"

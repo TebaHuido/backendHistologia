@@ -22,11 +22,12 @@ router.register(r'muestrass', views.MuestraViewSet2, basename='muestra2')  # Nom
 router.register(r'lotes', views.LoteViewSet)
 router.register(r'alumnos', views.AlumnoViewSet)
 router.register(r'capturas', views.CapturaViewSet)
+router.register(r'tinciones', views.TincionViewSet)
 
 urlpatterns = [
     path('muestra3/<int:id>/', views.MuestraDetailAPIView.as_view(), name='muestra-detail'),
-    path('imagenes/', views.lista_imagenes, name='lista_imagenes'),
+    path('imagenes/', views.lista_imagenes, name='lista_imagenes'),#vista tipo frontend
     path('muestras/por_categoria/', views.MuestraViewSet.as_view({'get': 'por_categoria'}), name='muestras_por_categoria'),
-    path('lista_capturas_muestra/<int:muestra_id>/', views.lista_capturas_muestra, name='lista_capturas_muestra'),
+    path('lista_capturas_muestra/<int:muestra_id>/', views.lista_capturas_muestra, name='lista_capturas_muestra'),#vista tipo frontend
     path('', include(router.urls)),
 ]
