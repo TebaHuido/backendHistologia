@@ -132,3 +132,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+MEDIA_URL = '/images/'  # URL base para acceder a las imágenes desde el navegador
+MEDIA_ROOT = '/usr/share/nginx/html/images/'  # Ruta en el sistema de archivos donde Nginx busca las imágenes

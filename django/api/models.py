@@ -54,7 +54,7 @@ class Sistema(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre del sistema")
 
     def __str__(self):
-        return f"Sistema: {self.sisname}"
+        return f"Sistema: {self.name}"
     
 class Organo(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre del organo")

@@ -67,7 +67,7 @@ def lista_capturas_muestra(request, muestra_id):
     # Recupera las capturas asociadas a la muestra
     capturas = Captura.objects.filter(muestra=muestra)
     # Recupera los sistemas y órganos relacionados con la muestra
-    sistemas = muestra.organo.all().values_list('sistema__sisname', flat=True).distinct()
+    sistemas = muestra.organo.all().values_list('sistema__name', flat=True).distinct()
     organos = muestra.organo.all()
     categorias = muestra.Categoria.all()
 

@@ -49,19 +49,19 @@ class MuestraSerializer(serializers.ModelSerializer):
                 relative_url = relative_url[len('/muestras/'):]  # Elimina 'muestras/' del inicio
             
             # Construir manualmente la URL completa
-            server_url = 'http://localhost:8011/images'  # Ajusta el dominio y puerto según tu configuración
+            server_url = 'http://localhost:8000/images'  # Ajusta el dominio y puerto según tu configuración
             full_url = f"{server_url}/{relative_url}"  # Combina el dominio con la URL relativa corregida
             return full_url
         return None
 
     def get_sistema(self, obj):
-        sistemas = obj.organo.all().values_list('sistema__sisname', flat=True)
+        sistemas = obj.organo.all().values_list('sistema__name', flat=True)
         if sistemas:
             return sistemas[0]  # Solo devuelve el primer sistema por ahora, ajusta según necesites
         return None
 
 class LoteSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta:s
         model = Lote
         fields = '__all__'
 
@@ -108,7 +108,7 @@ class MuestraSerializer2(serializers.ModelSerializer):
         return NotaSerializer(notas, many=True).data
 
     def get_sistemas(self, obj):
-        sistemas = obj.organo.all().values_list('sistema__sisname', flat=True)
+        sistemas = obj.organo.all().values_list('sistema__name', flat=True)
         return list(sistemas) if sistemas else []
 
 class TincionSerializer(serializers.ModelSerializer):

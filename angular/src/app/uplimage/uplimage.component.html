@@ -44,7 +44,7 @@
         <label for="sistema">Sistema:</label>
         <select id="sistema" formControlName="sistema" (change)="onSistemaChange($event)">
           <option value="" disabled>Selecciona un sistema</option>
-          <option *ngFor="let sistema of sistemas" [value]="sistema.id">{{ sistema.sisname }}</option>
+          <option *ngFor="let sistema of sistemas" [value]="sistema.id">{{ sistema.name }}</option>
           <option value="new">Crear nuevo sistema</option>
         </select>
       </div>
