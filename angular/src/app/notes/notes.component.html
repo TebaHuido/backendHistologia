@@ -1,0 +1,25 @@
+<div class="sample-note" *ngFor="let sample of sampleNotes">
+    <!-- Nombre de la muestra, ocupa toda la fila -->
+    <a [routerLink]="['/sample', sample.id]" class="sample-link">{{ sample.name }}</a>
+  
+    <div class="sidebyside">
+      <!-- Detalles de la nota -->
+      <div class="note-details">
+        <label for="notes-{{ sample.id }}">Notas:</label>
+        <textarea id="notes-{{ sample.id }}" [(ngModel)]="sample.notes"></textarea>
+  
+        <label for="coordinates-{{ sample.id }}">Coordenadas:</label>
+        <input id="coordinates-{{ sample.id }}" type="text" [(ngModel)]="sample.coordinates" />
+      </div>
+  
+      <!-- Imagen de previsualización -->
+      <div class="right-area">
+        <div class="preview-section">
+          <img *ngIf="sample.previewUrl" [src]="sample.previewUrl" alt="Previsualización" class="preview-image" />
+          <p *ngIf="!sample.previewUrl">Sin previsualización</p>
+        </div>
+        <button class="save-button" (click)="onSave(sample)">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+  

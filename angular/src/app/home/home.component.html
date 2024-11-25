@@ -1,0 +1,57 @@
+<!-- home.component.html -->
+<div class="cuerpo">
+  <div class="filters">
+    <app-filter 
+      [label]="'Categorias'" 
+      [allItems]="filteredTejidosItems" 
+      (filterChange)="filterMuestras($event)">
+    </app-filter>
+    <app-filter 
+      [label]="'Sisttemas'" 
+      [allItems]="filteredTejidosItems" 
+      (filterChange)="filterMuestras($event)">
+    </app-filter>
+    <app-filter 
+      [label]="'Organos'" 
+      [allItems]="filteredTejidosItems" 
+      (filterChange)="filterMuestras($event)">
+    </app-filter>
+    <app-filter 
+      [label]="'Tinciones'" 
+      [allItems]="filteredTejidosItems" 
+      (filterChange)="filterMuestras($event)">
+    </app-filter>
+    <app-filter 
+      [label]="'Tags'" 
+      [allItems]="filteredTagsItems" 
+      (filterChange)="filterMuestras($event)">
+    </app-filter>
+  </div>
+  <section class="base">
+    <!-- Itera sobre cada sistema único -->
+    <div *ngFor="let sistema of sistemasUnicos" class="tissue-group">
+      <p class="tissue">{{ sistema }}</p>
+      <!-- Filtra las muestras por el sistema actual y muestra todas las muestras -->
+      <div class="orden">
+        <div *ngFor="let muestra of getMuestrasPorSistema(sistema)" class="orden-content">
+          <img (click)="drawPoint($event)" [src]="muestra.imagenUrl">
+          <a [href]="'http://localhost:4200/tejido/' + muestra.id" class="list-group-item">
+            {{ muestra.name }}
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Agrega una sección para las muestras sin sistema -->
+    <div class="tissue-group" *ngIf="getMuestrasSinSistema().length">
+      <p class="tissue">Sin sistema</p>
+      <div class="orden">
+        <div *ngFor="let muestra of getMuestrasSinSistema()" class="orden-content">
+          <img (click)="drawPoint($event)" [src]="muestra.imagenUrl">
+          <a [href]="'http://localhost:4200/tejido/' + muestra.id" class="list-group-item">
+            {{ muestra.name }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

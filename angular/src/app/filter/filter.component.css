@@ -1,0 +1,130 @@
+label {
+  margin-right: 10px;
+}
+.filter-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: white;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+
+.filter-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.filter-item.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.selected-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.selected-list li {
+  padding: 4px;
+}
+.input-spacing {
+  margin-left: 10px;
+}
+.selected-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.selected-list li {
+  padding: 8px 12px;
+  margin: 4px 0;
+  border: 1px solid #ccc; /* Contorno gris */
+  border-radius: 20px; /* Bordes redondeados */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Espaciado entre texto y botón */
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 14px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  color: darkred;
+}
+.selected-list ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Ajusta el ancho mínimo y máximo de los mosaicos */
+  gap: 10px; /* Espaciado entre elementos */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-list li {
+  padding: 8px 12px;
+  border: 1px solid #ccc; /* Contorno gris */
+  border-radius: 20px; /* Bordes redondeados */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Espaciado entre texto y botón */
+  background-color: #f9f9f9; /* Fondo claro */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para destacar los mosaicos */
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 14px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  color: darkred;
+}
+.selected-list ul {
+  display: flex; /* Flexbox para distribuir elementos */
+  flex-wrap: wrap; /* Permite que los elementos salten a la siguiente fila */
+  gap: 10px; /* Espaciado entre elementos */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-list li {
+  display: inline-flex; /* Para ajustar tamaño al contenido */
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid #ccc; /* Contorno gris */
+  border-radius: 20px; /* Bordes redondeados */
+  background-color: #f9f9f9; /* Fondo claro */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para destacar los mosaicos */
+  white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 14px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  color: darkred;
+}
+.filterdody {
+
+  margin-bottom: 20px;
+}

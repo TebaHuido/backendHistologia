@@ -1,0 +1,101 @@
+/* Contenedor Principal */
+.upload-form {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del Formulario */
+.upload-form h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Contenedor de los Campos del Formulario */
+.upload-form div {
+  margin-bottom: 20px;
+}
+
+/* Etiquetas */
+.upload-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+  font-size: 16px;
+}
+
+/* Campos de Texto y Selects */
+.upload-form input[type="text"],
+.upload-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+/* Estilo para el Campo de Archivos */
+.upload-form input[type="file"] {
+  display: block;
+  margin-top: 10px;
+}
+
+/* Contenedor del FormArray */
+.upload-form .formArray-container {
+  margin-top: 20px;
+}
+
+.upload-form .formArray-container input {
+  width: calc(100% - 24px); /* Para acomodar el padding */
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Botón de Envío */
+.upload-form button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.upload-form button:hover {
+  background-color: #0056b3;
+  transform: scale(1.02);
+}
+
+.upload-form button:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+  transition: none;
+}
+
+/* Estado de Error en los Campos */
+.upload-form input.ng-invalid.ng-touched,
+.upload-form select.ng-invalid.ng-touched {
+  border-color: #e57373;
+}
+
+.upload-form input.ng-valid.ng-touched,
+.upload-form select.ng-valid.ng-touched {
+  border-color: #81c784;
+}

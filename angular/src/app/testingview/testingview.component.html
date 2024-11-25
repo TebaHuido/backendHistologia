@@ -1,0 +1,86 @@
+<div class="cuerpo">
+    <section class="filters">
+      <!-- Filtro de Sistemas -->
+      <div class="filter-group">
+        <label for="sistemas-filter">Sistemas:</label>
+        <input
+          id="sistemas-filter"
+          type="text"
+          placeholder="Buscar sistemas..."
+          (input)="filterSistemas($event)"
+        />
+        <div class="filter-list" *ngIf="filteredSistemas.length">
+          <div
+            class="filter-item"
+            *ngFor="let sistema of filteredSistemas"
+            [class.selected]="isSelected(sistema, 'sistemas')"
+            (click)="toggleFilter(sistema, 'sistemas')"
+          >
+            {{ sistema.nombre }}
+          </div>
+        </div>
+      </div>
+  
+      <!-- Filtro de Órganos -->
+      <div class="filter-group">
+        <label for="organos-filter">Órganos:</label>
+        <input
+          id="organos-filter"
+          type="text"
+          placeholder="Buscar órganos..."
+          (input)="filterOrganos($event)"
+        />
+        <div class="filter-list" *ngIf="filteredOrganos.length">
+          <div
+            class="filter-item"
+            *ngFor="let organo of filteredOrganos"
+            [class.selected]="isSelected(organo, 'organos')"
+            (click)="toggleFilter(organo, 'organos')"
+          >
+            {{ organo.nombre }}
+          </div>
+        </div>
+      </div>
+  
+      <!-- Filtro de Tinciones -->
+      <div class="filter-group">
+        <label for="tinciones-filter">Tinciones:</label>
+        <input
+          id="tinciones-filter"
+          type="text"
+          placeholder="Buscar tinciones..."
+          (input)="filterTinciones($event)"
+        />
+        <div class="filter-list" *ngIf="filteredTinciones.length">
+          <div
+            class="filter-item"
+            *ngFor="let tincion of filteredTinciones"
+            [class.selected]="isSelected(tincion, 'tinciones')"
+            (click)="toggleFilter(tincion, 'tinciones')"
+          >
+            {{ tincion.nombre }}
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Lista de Muestras Filtradas -->
+    <section class="muestras">
+      <h3>Muestras</h3>
+      <div class="grid">
+        <div class="card" *ngFor="let muestra of filteredMuestras" (click)="selectCategory(muestra)">
+          <img [src]="muestra.image || 'https://via.placeholder.com/150'" alt="Muestra">
+          <div class="card-body">
+            <h4>{{ muestra.name }}</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Vista de Imagen Seleccionada -->
+    <section class="base" *ngIf="imagenSeleccionada">
+      <h3>Imagen Seleccionada</h3>
+      <img [src]="imagenSeleccionada.image" alt="Imagen seleccionada">
+    </section>
+  </div>
+  

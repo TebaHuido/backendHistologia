@@ -1,0 +1,63 @@
+header {
+    background-color: #24407e;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between; /* Asegura que haya espacio entre los elementos */
+    align-items: center; /* Alinea verticalmente los elementos */
+}
+
+.nombre {
+    display: flex;
+    align-items: center; /* Asegura que el contenido esté alineado verticalmente */
+    text-align: left;
+}
+
+.titulo {
+    margin-left: 10px;
+}
+
+.menu {
+    display: flex;
+    align-items: center; /* Alinea verticalmente los elementos del menú */
+    gap: 1rem; /* Espaciado entre los elementos del menú */
+}
+
+.menu img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+button {
+    cursor: pointer;
+    height: 40px;
+    width: 60px;
+    border-radius: 10%;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #24407e;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+footer h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}

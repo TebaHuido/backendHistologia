@@ -1,0 +1,94 @@
+:host {
+  display: block;  /* Asegura que el componente ocupa un bloque */
+  width: 100%;     /* Ajusta el ancho al 100% del contenedor */
+  max-width: 100%; /* Evita que el componente se estire más allá de su contenedor */
+  height: 100%;    /* Ajusta la altura al 100% del contenedor */
+  max-height: 100%; /* Evita que el componente se estire más allá de su contenedor */
+}
+.image-container {
+  position: relative;
+  width: auto; /* Ajusta según tus necesidades */
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #ccc;
+  cursor: grab;
+  user-select: none;
+}
+
+.image-container:active {
+  cursor: grabbing;
+}
+
+.image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Aseguramos que los botones estén siempre visibles por encima de la imagen */
+.button-container {
+  position: absolute;
+  top: 10px;
+  right: 10px; /* Alinea todo el contenedor a la derecha */
+  z-index: 1000; /* Aseguramos que esté por encima de la imagen */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Alinea los botones de zoom horizontalmente */
+.zoom-buttons {
+  display: flex;
+  gap: 5px; /* Espacio entre los botones de zoom */
+}
+
+.zoom-button {
+  background-color: rgba(255, 255, 255, 0.5); /* 50% de transparencia */
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
+  width: 50px; /* Ancho reducido sólo para los botones de zoom */
+}
+
+.zoom-button:hover {
+  background-color: rgba(255, 255, 255, 0.7); /* Aumenta la opacidad al hacer hover */
+}
+
+.other-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Añade espacio entre los botones */
+}
+
+.other-buttons button {
+  background-color: rgba(255, 255, 255, 0.5); /* 50% de transparencia */
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
+  width: 100px; /* Ancho completo para los otros botones */
+}
+
+.other-buttons button:hover {
+  background-color: rgba(255, 255, 255, 0.7); /* Aumenta la opacidad al hacer hover */
+}
+
+.label-marker {
+  position: absolute;
+  background-color: red;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

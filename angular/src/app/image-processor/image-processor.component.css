@@ -1,0 +1,115 @@
+.image-processor-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-content {
+  display: flex;
+  width: 100%;
+  height: 90%;
+  max-width: 1200px;
+  max-height: 600px;
+  gap: 20px;
+}
+
+.upload-section {
+  flex: 2;
+  padding: 20px;
+  height: 100%;
+  width: 50%;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.controls {
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.controls.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.preview-section {
+  margin-top: 20px;
+}
+
+.preview-image {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label span {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #555;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+input[type="number"] {
+  max-width: 80px;
+}
+
+.processed-image {
+  max-width: 100%;
+  height: 61vh;
+  margin-bottom: 5vh;
+}
+
+.progress-container {
+  margin-top: 10px;
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  color: #333;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}

@@ -1,0 +1,36 @@
+<div class="filterdody">
+  <div class="filter">
+    <label [for]="filterId">{{ label }}</label>
+    <input
+      [id]="filterId"
+      type="text"
+      placeholder="Buscar {{ label | lowercase }}..."
+      (input)="onSearch($event)" 
+      (focus)="showDropdown = true"  
+      (blur)="onBlur()"
+      cla
+    />
+    
+    <!-- Desplegable de resultados de búsqueda -->
+    <div class="filter-list" *ngIf="showDropdown && filteredItems.length">
+      <div
+        class="filter-item"
+        *ngFor="let item of filteredItems"
+        [class.selected]="isSelected(item)"
+        (click)="toggleSelection(item)">
+        {{ item.nombre }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de elementos seleccionados -->
+  <div class="selected-list">
+    <label>Seleccionados:</label>
+    <ul>
+      <li *ngFor="let selectedItem of selectedItems">
+        {{ selectedItem.nombre }}
+        <button (click)="removeSelection(selectedItem)" class="remove-btn">x</button>
+      </li>
+    </ul>
+  </div>
+</div>

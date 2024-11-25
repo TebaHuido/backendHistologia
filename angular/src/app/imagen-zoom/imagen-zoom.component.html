@@ -1,0 +1,41 @@
+<div #imageContainer class="image-container"
+     (wheel)="onWheel($event)"
+     (mousedown)="onMouseDown($event)"
+     (mousemove)="onMouseMove($event)"
+     (mouseup)="onMouseUp()">
+  <img [src]="imageUrl"
+       [style.transform]="'translate(' + (-offsetX) + 'px,' + (-offsetY) + 'px) scale(' + scale + ')'"
+       [style.transform-origin]="'0 0'"
+       (click)="onImageClick($event)"
+       draggable="false"
+       alt="Imagen con zoom">
+
+  <!-- Botones de zoom (en su propio contenedor) -->
+  <div class="button-container">
+    <div class="zoom-buttons">
+      <button *ngIf="!isTaggingMode" class="zoom-button" (click)="zoomIn()">+</button>
+      <button *ngIf="!isTaggingMode" class="zoom-button" (click)="zoomOut()">-</button>
+    </div>
+
+    <!-- Otros botones (en su propio contenedor) -->
+    <div class="other-buttons">
+      <!-- Botón para activar/desactivar el modo etiquetado -->
+      <button (click)="toggleTaggingMode()">
+        {{ isTaggingMode ? 'Salir de etiquetado' : 'Activar etiquetado' }}
+      </button>
+
+      <!-- Botón para mostrar/ocultar etiquetas -->
+      <button (click)="toggleLabelsVisibility()">
+        {{ showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Mostrar etiquetas en la imagen -->
+  <ng-container *ngIf="showLabels">
+    <div *ngFor="let label of labels"
+         class="label-marker"
+         [style.transform]="'translate(' + (label.x * scale - offsetX) + 'px, ' + (label.y * scale - offsetY) + 'px)'">
+    </div>
+  </ng-container>
+</div>

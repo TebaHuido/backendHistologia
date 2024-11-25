@@ -1,0 +1,75 @@
+<!-- uplimage.component.html -->
+
+<div class="upload-form">
+  <form [formGroup]="sampleForm" (ngSubmit)="onSubmit()">
+    <!-- Nombre de la Muestra -->
+    <div>
+      <label for="sampleName">Nombre de la Muestra:</label>
+      <input id="sampleName" type="text" formControlName="name" placeholder="Nombre de la muestra" />
+    </div>
+
+    <!-- Selección de Categoría -->
+    <div>
+      <label for="category">Categoría:</label>
+      <select id="category" formControlName="category" (change)="onCategoryChange($event)">
+        <option value="" disabled>Selecciona una categoría</option>
+        <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        <option value="new">Crear nueva categoría</option>
+      </select>
+    </div>
+
+    <!-- Campo para Crear Nueva Categoría -->
+    <div *ngIf="isCreatingNewCategory">
+      <label for="newCategory">Nueva Categoría:</label>
+      <input id="newCategory" type="text" formControlName="newCategory" placeholder="Nombre de la nueva categoría" />
+    </div>
+
+    <!-- Selección de Órgano -->
+    <div>
+      <label for="organo">Órgano:</label>
+      <select id="organo" formControlName="organo" (change)="onOrganoChange($event)">
+        <option value="" disabled>Selecciona un órgano</option>
+        <option *ngFor="let organo of organos" [value]="organo.id">{{ organo.orgname }}</option>
+        <option value="new">Crear nuevo órgano</option>
+      </select>
+    </div>
+
+    <!-- Campo para Crear Nuevo Órgano -->
+    <div *ngIf="isCreatingNewOrgano">
+      <label for="newOrgano">Nuevo Órgano:</label>
+      <input id="newOrgano" type="text" formControlName="newOrgano" placeholder="Nombre del nuevo órgano" />
+
+      <!-- Selección de Sistema para el Nuevo Órgano -->
+      <div>
+        <label for="sistema">Sistema:</label>
+        <select id="sistema" formControlName="sistema" (change)="onSistemaChange($event)">
+          <option value="" disabled>Selecciona un sistema</option>
+          <option *ngFor="let sistema of sistemas" [value]="sistema.id">{{ sistema.sisname }}</option>
+          <option value="new">Crear nuevo sistema</option>
+        </select>
+      </div>
+
+      <!-- Campo para Crear Nuevo Sistema -->
+      <div *ngIf="isCreatingNewSistema">
+        <label for="newSistema">Nuevo Sistema:</label>
+        <input id="newSistema" type="text" formControlName="newSistema" placeholder="Nombre del nuevo sistema" />
+      </div>
+    </div>
+
+    <!-- Subida de Imágenes -->
+    <div>
+      <label for="images">Seleccionar Imágenes:</label>
+      <input id="images" type="file" (change)="onFileChange($event)" multiple />
+    </div>
+
+    <!-- Nombres para las Imágenes -->
+    <div formArrayName="images">
+      <div *ngFor="let image of imageFormArray.controls; let i = index">
+        <input [formControlName]="i" type="text" placeholder="Nombre de la imagen {{ i + 1 }}" />
+      </div>
+    </div>
+
+    <!-- Botón de Envío -->
+    <button type="submit" [disabled]="sampleForm.invalid || selectedFiles.length === 0">Agregar Muestra</button>
+  </form>
+</div>

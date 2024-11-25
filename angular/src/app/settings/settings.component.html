@@ -1,0 +1,68 @@
+<div class="profile-container">
+    <h1>Editar Perfil</h1>
+  
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <!-- Apodo -->
+      <div class="form-group">
+        <label for="nickname">Apodo:</label>
+        <input
+          id="nickname"
+          type="text"
+          formControlName="nickname"
+          placeholder="Ingresa tu apodo"
+        />
+        <div *ngIf="profileForm.get('nickname')?.invalid && profileForm.get('nickname')?.touched">
+          <small class="error-text">El apodo es obligatorio y debe tener al menos 3 caracteres.</small>
+        </div>
+      </div>
+  
+      <!-- Correo Electrónico -->
+      <div class="form-group">
+        <label for="email">Correo Electrónico:</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Ingresa tu correo electrónico"
+        />
+        <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+          <small class="error-text">Por favor, ingresa un correo electrónico válido.</small>
+        </div>
+      </div>
+  
+      <!-- Cambiar Contraseña -->
+      <div class="form-group">
+        <label for="password">Nueva Contraseña:</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Ingresa tu nueva contraseña"
+        />
+        <div *ngIf="profileForm.get('password')?.invalid && profileForm.get('password')?.touched">
+          <small class="error-text">La contraseña debe tener al menos 6 caracteres.</small>
+        </div>
+      </div>
+  
+      <!-- Confirmar Contraseña -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña:</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirma tu nueva contraseña"
+        />
+        <div *ngIf="profileForm.get('confirmPassword')?.invalid && profileForm.get('confirmPassword')?.touched">
+          <small class="error-text">Las contraseñas deben coincidir.</small>
+        </div>
+      </div>
+  
+      <!-- Botones -->
+      <div class="button-group">
+        <button type="submit" [disabled]="profileForm.invalid" class="save-btn">Guardar Cambios</button>
+        <button type="button" (click)="cancel()" class="cancel-btn">Cancelar</button>
+      </div>
+    </form>
+  </div>
+  

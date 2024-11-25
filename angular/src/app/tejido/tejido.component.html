@@ -1,0 +1,27 @@
+<div class="cuerpo">
+  <section class="container">
+    <p class="category">Seleccione una imagen:</p>
+    <div class="list-group">
+      <button role="button" class="list-group-category" *ngFor="let captura of tejidosArray[0]?.capturas" (click)="seleccionarImagen(captura)">
+        {{ captura.name }}<br>
+      </button>
+    </div>
+
+    <p class="category">Seleccione una nota:</p>
+    <div class="list-group">
+      <a class="list-group-category" *ngFor="let nota of tejidosArray[0]?.notas" (click)="selectCategory(nota.nota)">
+        {{ nota.nota }}<br>
+      </a>
+    </div>
+
+    <p class="category">Sistemas:</p>
+    <div class="list-group">
+      <button role="button" class="list-group-category" *ngFor="let sistema of tejidosArray[0]?.sistemas" (click)="selectCategory(sistema)">
+        {{ sistema }}<br>
+      </button>
+    </div>
+  </section>
+  <section class="base">
+    <app-imagen-zoom [imageUrl]="imagenSeleccionada?.image"></app-imagen-zoom>
+</section>
+</div>

@@ -1,0 +1,72 @@
+<div class="image-processor-container">
+  <h2>Procesador de Imágenes</h2>
+
+  <div class="main-content">
+    <!-- Sección izquierda: carga de imagen y resultado procesado -->
+    <div class="upload-section">
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+
+      <div *ngIf="isLoading" class="loading-spinner">
+        <p>Procesando imagen...</p>
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="progress-container">
+        <p>Subiendo: {{ uploadProgress }}%</p>
+        <progress [value]="uploadProgress" max="100"></progress>
+      </div>
+      
+      <div *ngIf="processedImageUrl && !isLoading" class="processed-image">
+        <h3>Imagen Procesada:</h3>
+        <app-imagen-zoom [imageUrl]="processedImageUrl" alt="Imagen Procesada" ></app-imagen-zoom>
+      </div>
+      
+      <div *ngIf="errorMessage" class="error">
+        <p>{{ errorMessage }}</p>
+        <button (click)="retryUpload()">Reintentar</button>
+      </div>
+
+      <div *ngIf="successMessage && !isLoading" class="success-message">
+        <p>{{ successMessage }}</p>
+      </div>
+    </div>
+
+    <!-- Menú derecho: controles de parámetros -->
+    <div class="controls" [class.disabled]="!selectedFile || isLoading">
+      <h3>Parámetros de Procesamiento</h3>
+      
+      <label>
+        <span>Factor de Escala (scaleFactor): {{ scaleFactor }}</span>
+        <input type="range" min="1.01" max="2.0" step="0.01" [(ngModel)]="scaleFactor" />
+        <input type="number" min="1.01" max="2.0" step="0.01" [(ngModel)]="scaleFactor" />
+      </label>
+      
+      <label>
+        <span>Mínimo Vecinos (minNeighbors): {{ minNeighbors }}</span>
+        <input type="range" min="1" max="10" step="1" [(ngModel)]="minNeighbors" />
+        <input type="number" min="1" max="10" step="1" [(ngModel)]="minNeighbors" />
+      </label>
+      
+      <label>
+        <span>Tamaño Mínimo (minSize): {{ minSize[0] }}x{{ minSize[1] }}</span>
+        <input type="number" [(ngModel)]="minSize[0]" placeholder="Ancho" />
+        <input type="number" [(ngModel)]="minSize[1]" placeholder="Alto" />
+      </label>
+      
+      <label>
+        <span>Tamaño Máximo (maxSize): {{ maxSize[0] }}x{{ maxSize[1] }}</span>
+        <input type="number" [(ngModel)]="maxSize[0]" placeholder="Ancho" />
+        <input type="number" [(ngModel)]="maxSize[1]" placeholder="Alto" />
+      </label>
+      
+      <label>
+        <span>Factor de Reducción (shrink_factor): {{ shrinkFactor }}</span>
+        <input type="range" min="0.5" max="1.0" step="0.01" [(ngModel)]="shrinkFactor" />
+        <input type="number" min="0.5" max="1.0" step="0.01" [(ngModel)]="shrinkFactor" />
+      </label>
+
+      <!-- Botón para aplicar los cambios de parámetros -->
+      <button (click)="applyParameters()" [disabled]="isLoading">Actualizar Imagen</button>
+    </div>
+  </div>
+</div>
