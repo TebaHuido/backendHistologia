@@ -110,3 +110,8 @@ class MuestraSerializer2(serializers.ModelSerializer):
     def get_sistemas(self, obj):
         sistemas = obj.organo.all().values_list('sistema__sisname', flat=True)
         return list(sistemas) if sistemas else []
+
+class TincionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tincion
+        fields = '__all__'

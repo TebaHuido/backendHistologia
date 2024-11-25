@@ -17,7 +17,7 @@ def default_name():
     return f"Captura {Captura.objects.count()+1}"
 
 class Profesor(models.Model):
-    nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    name = models.CharField(max_length=100, verbose_name="Nombre")
     passhash = models.CharField(max_length=100, verbose_name="Hash")
     correo = models.CharField(max_length=100, verbose_name="Correo")
 
@@ -36,7 +36,7 @@ class Curso(models.Model):
     
 class Ayudante(models.Model):
     niveldeacceso = models.CharField(max_length=5, verbose_name="Nivel de acceso")
-    nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    name = models.CharField(max_length=100, verbose_name="Nombre")
     passhash = models.CharField(max_length=100, verbose_name="Hash")
     correo = models.CharField(max_length=100, verbose_name="Correo")
     curso = models.ManyToManyField(Curso, blank=True)
@@ -51,18 +51,45 @@ class Categoria(models.Model):
         return f"Categoría: {self.name}"
     
 class Sistema(models.Model):
-    sisname = models.CharField(max_length=100, verbose_name="Nombre del sistema")
+    name = models.CharField(max_length=100, verbose_name="Nombre del sistema")
 
     def __str__(self):
         return f"Sistema: {self.sisname}"
     
 class Organo(models.Model):
-    orgname = models.CharField(max_length=100, verbose_name="Nombre del organo")
+    name = models.CharField(max_length=100, verbose_name="Nombre del organo")
     sistema = models.ManyToManyField(Sistema, blank=True)
 
     def __str__(self):
         return f"Órgano: {self.orgname}"
-    
+
+class Captura(models.Model):
+    aumento = models.FloatField(default=0.0, null=True, blank=True)
+    name = models.CharField(default=default_name, max_length=100, verbose_name="Nombre")
+    image = models.ImageField(upload_to=generate_filename, null=False, blank=False, verbose_name="Captura")
+    muestra = models.ForeignKey('Muestra', models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"Imagen {self.id}: {self.name} x {self.aumento}"
+
+    class Meta:
+        verbose_name = "Captura"
+        verbose_name_plural = "Capturas"
+
+    def get_filename(self):
+        return os.path.basename(self.image.name)
+
+class Tincion(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Nombre")
+    descripcion = models.CharField(max_length=1000, verbose_name="Descripcion")
+    captura = models.ManyToManyField(Captura, blank=True)
+
+    def __str__(self):
+        return f"Tinción: {self.name} ({self.descripcion})"
+
+class Tag (models.Model):
+    name = models.CharField(max_length=100, verbose_name="Nombre")
+
 class Muestra(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
     Categoria = models.ManyToManyField(Categoria)
@@ -81,7 +108,7 @@ class Lote(models.Model):
         return f"Lote: {self.name}"
     
 class Alumno(models.Model):
-    nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    name = models.CharField(max_length=100, verbose_name="Nombre")
     passhash = models.CharField(max_length=100, verbose_name="Hash")
     correo = models.CharField(max_length=100, verbose_name="Correo")
     curso = models.ManyToManyField(Curso, blank=True)
@@ -89,22 +116,6 @@ class Alumno(models.Model):
 
     def __str__(self):
         return f"Alumno: {self.nombre} ({self.correo})"
-    
-class Captura(models.Model):
-    aumento = models.FloatField(default=0.0,null=True, blank=True)
-    name = models.CharField(default=default_name ,max_length=100, verbose_name="Nombre")
-    image = models.ImageField(upload_to=generate_filename, null=False, blank=False, verbose_name="Captura")
-    muestra = models.ForeignKey(Muestra, models.SET_NULL, null=True, blank=True)
-
-    def __str__(self):
-        return f"Imagen {self.id}: {self.name} x {self.aumento}"
-
-    class Meta:
-        verbose_name = "Captura"
-        verbose_name_plural = "Capturas"
-
-    def get_filename(self):
-        return os.path.basename(self.image.name)
 
 @receiver(pre_delete, sender=Captura)
 def delete_image(sender, instance, **kwargs):
@@ -119,18 +130,22 @@ def delete_image(sender, instance, **kwargs):
 class Notas(models.Model):
     nota = models.CharField(max_length=1500, verbose_name="Nota")
     alumno = models.ForeignKey(Alumno, models.SET_NULL, null=True, blank=True)
+    ayudante = models.ForeignKey(Ayudante, models.SET_NULL, null=True, blank=True)
+    profesor = models.ForeignKey(Profesor, models.SET_NULL, null=True, blank=True)
+    public = models.BooleanField(default=False)
     muestra = models.ManyToManyField(Muestra, blank=True)
-
+    tags = models.ManyToManyField(Tag, blank=True)
     def __str__(self):
         return f"Nota: {self.nota} ({self.alumno} - {self.muestra})"
 
     class Meta:
         verbose_name = "Nota"
         verbose_name_plural = "Notas"
-class Tincion(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Nombre")
-    descripcion = models.CharField(max_length=1000, verbose_name="Descripcion")
-    captura = models.ManyToManyField(Captura, blank=True)
 
+class Label(models.Model):
+    nota = models.CharField(max_length=1500, verbose_name="Nota")
+    tags = models.ManyToManyField('Tag', related_name='labels', verbose_name="Etiquetas")
+    coordenadas = models.JSONField(verbose_name="Coordenadas", help_text="JSON con las coordenadas asociadas")
+    
     def __str__(self):
-        return f"Tinción: {self.name} ({self.descripcion})"
+        return self.nota[:50]  # Retorna los primeros 50 caracteres de la nota   
