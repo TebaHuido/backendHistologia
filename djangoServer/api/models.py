@@ -124,3 +124,31 @@ class Notas(models.Model):
     class Meta:
         verbose_name = "Nota"
         verbose_name_plural = "Notas"
+class MuestraFilterAPIView(generics.ListAPIView):
+    queryset = Muestra.objects.all()
+    serializer_class = MuestraSerializer
+
+    def get_queryset(self):
+        """
+        Filtra las muestras según los parámetros de la URL.
+        """
+        queryset = super().get_queryset()
+        categoria_id = self.request.query_params.get('categoria')
+        sistema_id = self.request.query_params.get('sistema')
+        organo_id = self.request.query_params.get('organo')
+        tincion_id = self.request.query_params.get('tincion')
+        tag_id = self.request.query_params.get('tag')
+
+        # Construcción dinámica de los filtros
+        if categoria_id:
+            queryset = queryset.filter(Categoria__id=categoria_id)
+        if sistema_id:
+            queryset = queryset.filter(organo__sistema__id=sistema_id)
+        if organo_id:
+            queryset = queryset.filter(organo__id=organo_id)
+        if tincion_id:
+            queryset = queryset.filter(tincion__id=tincion_id)
+        if tag_id:
+            queryset = queryset.filter(notas__tags__id=tag_id)
+
+        return queryset.distinct()
