@@ -54,9 +54,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
-)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
 ]
@@ -134,5 +131,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # settings.py
-MEDIA_URL = '/images/'  # URL base para acceder a las imágenes desde el navegador
-MEDIA_ROOT = '/usr/share/nginx/html/images/'  # Ruta en el sistema de archivos donde Nginx busca las imágenes
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')

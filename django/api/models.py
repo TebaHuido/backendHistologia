@@ -14,7 +14,7 @@ def generate_filename(instance, filename):
     return os.path.join('muestras/', new_filename)
 
 def default_name():
-    return f"Captura {Captura.objects.count()+1}"
+     return f"Captura-{uuid.uuid4()}"
 
 class Profesor(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
@@ -22,7 +22,7 @@ class Profesor(models.Model):
     correo = models.CharField(max_length=100, verbose_name="Correo")
 
     def __str__(self):
-        return f"Profesor: {self.nombre} ({self.correo})"
+        return f"Profesor: {self.name} ({self.correo})"
    
 class Curso(models.Model):
     asignatura = models.CharField(max_length=100, verbose_name="Asignatura")
@@ -42,7 +42,7 @@ class Ayudante(models.Model):
     curso = models.ManyToManyField(Curso, blank=True)
 
     def __str__(self):
-        return f"Ayudante: {self.nombre} ({self.correo})"
+        return f"Ayudante: {self.name} ({self.correo})"
  
 class Categoria(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
@@ -65,7 +65,7 @@ class Organo(models.Model):
 
 class Captura(models.Model):
     aumento = models.FloatField(default=0.0, null=True, blank=True)
-    name = models.CharField(default=default_name, max_length=100, verbose_name="Nombre")
+    name = models.CharField(max_length=100, default=default_name, blank=True)
     image = models.ImageField(upload_to=generate_filename, null=False, blank=False, verbose_name="Captura")
     muestra = models.ForeignKey('Muestra', models.SET_NULL, null=True, blank=True)
 
@@ -115,7 +115,7 @@ class Alumno(models.Model):
     permiso = models.ManyToManyField(Muestra, blank=True)
 
     def __str__(self):
-        return f"Alumno: {self.nombre} ({self.correo})"
+        return f"Alumno: {self.name} ({self.correo})"
 
 @receiver(pre_delete, sender=Captura)
 def delete_image(sender, instance, **kwargs):

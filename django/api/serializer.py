@@ -29,47 +29,7 @@ class OrganoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organo
         fields = '__all__'
-
-class MuestraSerializer(serializers.ModelSerializer):
-    imagenUrl = serializers.SerializerMethodField()
-    sistema = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Muestra
-        fields = ['id', 'name', 'imagenUrl', 'sistema']  # Campos que deseas mostrar
-
-    def get_imagenUrl(self, obj):
-        first_image = obj.captura_set.first()
-        if first_image:
-            # Obtener la URL relativa de la imagen
-            relative_url = first_image.image.url  # Ejemplo: 'muestras/a9e929b1-5acb-404d-8798-329166b222d4.gif'
-            
-            # Eliminar la parte '/muestras' de la URL relativa
-            if relative_url.startswith('/muestras/'):
-                relative_url = relative_url[len('/muestras/'):]  # Elimina 'muestras/' del inicio
-            
-            # Construir manualmente la URL completa
-            server_url = 'http://localhost:8000/images'  # Ajusta el dominio y puerto según tu configuración
-            full_url = f"{server_url}/{relative_url}"  # Combina el dominio con la URL relativa corregida
-            return full_url
-        return None
-
-    def get_sistema(self, obj):
-        sistemas = obj.organo.all().values_list('sistema__name', flat=True)
-        if sistemas:
-            return sistemas[0]  # Solo devuelve el primer sistema por ahora, ajusta según necesites
-        return None
-
-class LoteSerializer(serializers.ModelSerializer):
-    class Meta:s
-        model = Lote
-        fields = '__all__'
-
-class AlumnoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Alumno
-        fields = '__all__'
-
+        
 class CapturaSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
@@ -81,9 +41,54 @@ class CapturaSerializer(serializers.ModelSerializer):
         relative_url = obj.image.url
         if relative_url.startswith('/muestras/'):
             relative_url = relative_url[len('/muestras/'):]
-        server_url = 'http://localhost:8011/images'
+        server_url = 'http://localhost:80/images'
         full_url = f"{server_url}/{relative_url}"
         return full_url
+
+class MuestraSerializer(serializers.ModelSerializer):
+    images = CapturaSerializer(many=True)  # Para manejar las imágenes
+    organo = OrganoSerializer(many=True)   # Relación ManyToMany con Organo
+    categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all(), many=True)
+
+    class Meta:
+        model = Muestra
+        fields = ['id', 'name', 'categoria', 'organo', 'images']
+
+    def create(self, validated_data):
+        images_data = validated_data.pop('images')
+        organo_data = validated_data.pop('organo')
+        categoria_data = validated_data.pop('categoria')
+
+        # Crear la muestra
+        muestra = Muestra.objects.create(**validated_data)
+
+        # Asociar las categorías
+        muestra.categoria.set(categoria_data)
+
+        # Crear y asociar los órganos
+        for organo in organo_data:
+            organo_instance = Organo.objects.create(**organo)
+            muestra.organo.add(organo_instance)
+
+        # Crear y asociar las imágenes
+        for image_data in images_data:
+            image_instance = Captura.objects.create(**image_data)
+            muestra.images.add(image_instance)
+
+        return muestra
+
+
+class LoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lote
+        fields = '__all__'
+
+class AlumnoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Alumno
+        fields = '__all__'
+
+
 
 class NotaSerializer(serializers.ModelSerializer):
     class Meta:

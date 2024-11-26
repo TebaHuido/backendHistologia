@@ -107,43 +107,44 @@ export class UplimageComponent implements OnInit {
 
   onSubmit() {
     if (this.sampleForm.invalid) {
+      console.log('Formulario inválido');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('name', this.sampleForm.get('name')?.value);
-
-    // Manejo de categorías
+  
+    // Verificar si la categoría está seleccionada
     const selectedCategory = this.sampleForm.get('category')?.value;
     if (this.isCreatingNewCategory) {
-      formData.append('new_category', this.sampleForm.get('newCategory')?.value);
+      formData.append('categoria', this.sampleForm.get('newCategory')?.value);
     } else if (selectedCategory && selectedCategory !== 'new') {
-      formData.append('Categoria', selectedCategory.toString());
+      // Asegúrate de que selectedCategory sea un arreglo
+      formData.append('categoria', JSON.stringify([selectedCategory]));
     }
 
-    // Manejo de órganos
+
+    // Verificar si el órgano está seleccionado
     const selectedOrgano = this.sampleForm.get('organo')?.value;
     if (this.isCreatingNewOrgano) {
-      formData.append('new_organo', this.sampleForm.get('newOrgano')?.value);
-
-      // Manejo de sistemas al crear un nuevo órgano
-      const selectedSistema = this.sampleForm.get('sistema')?.value;
-      if (this.isCreatingNewSistema) {
-        formData.append('new_sistema', this.sampleForm.get('newSistema')?.value);
-      } else if (selectedSistema && selectedSistema !== 'new') {
-        formData.append('Sistema', selectedSistema.toString());
-      }
+      formData.append('organo', this.sampleForm.get('newOrgano')?.value);
     } else if (selectedOrgano && selectedOrgano !== 'new') {
-      formData.append('Organo', selectedOrgano.toString());
+      formData.append('organo', selectedOrgano.toString());
+    } else {
+      console.log('Error: Se debe seleccionar un órgano');
     }
-
-    // Agregar archivos de imagen y sus nombres
-    for (let i = 0; i < this.selectedFiles.length; i++) {
-      formData.append('images', this.selectedFiles[i]);
-      formData.append('image_names', this.imageFormArray.at(i).value);
+  
+    // Verificar si las imágenes están seleccionadas
+    if (this.selectedFiles.length > 0) {
+      for (let i = 0; i < this.selectedFiles.length; i++) {
+        formData.append('images', this.selectedFiles[i]);
+        formData.append('image_names', this.imageFormArray.at(i).value);
+      }
+    } else {
+      console.log('Error: Se deben seleccionar imágenes');
     }
-
-    // Hacer la solicitud POST al servidor
+  
+    // Realizar la solicitud POST al servidor
     this.http.post('http://localhost:8000/muestras/', formData).subscribe(
       response => {
         console.log('Muestra creada exitosamente', response);
@@ -159,4 +160,6 @@ export class UplimageComponent implements OnInit {
       }
     );
   }
+  
+  
 }

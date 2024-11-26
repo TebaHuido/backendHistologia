@@ -1,11 +1,11 @@
 # Importa herramientas de Django para manejar vistas y recuperar objetos
 from django.shortcuts import render, get_object_or_404
-
+import json
 # Importa módulos de DRF (Django Rest Framework) para crear API y vistas
 from rest_framework import viewsets, generics ,status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from django.core.files.uploadedfile import InMemoryUploadedFile
 # Importa los modelos que serán utilizados en las vistas
 from .models import (
     Profesor, Curso, Ayudante, Categoria, Sistema, Organo, 
@@ -34,32 +34,40 @@ class CapturaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Captura.objects.all()
     serializer_class = CapturaSerializer
 
-# Vista para manejar muestras con operaciones CRUD completas
+
+def filter_files_from_data(data):
+    """Filtra los archivos InMemoryUploadedFile de los datos."""
+    # Devuelve un diccionario con los datos que no son archivos
+    return {
+        key: value
+        for key, value in data.items()
+        if not isinstance(value, InMemoryUploadedFile)
+    }
+
 class MuestraViewSet(viewsets.ModelViewSet):
-    # Define el conjunto de datos y el serializer para el modelo Muestra
     queryset = Muestra.objects.all()
     serializer_class = MuestraSerializer
 
-    # Método adicional para filtrar muestras por categoría
-    @action(detail=False, methods=['get'])
-    def por_categoria(self, request):
-        # Recupera el parámetro de categoría desde la solicitud
-        categoria_name = request.query_params.get('category', None)
+    def create(self, request, *args, **kwargs):
+        # Filtrar los archivos de request.data
+        filtered_data = filter_files_from_data(request.data)
 
-        # Maneja los distintos casos posibles
-        if categoria_name == 'all':
-            muestras = self.queryset.all()  # Recupera todas las muestras
-        elif categoria_name is not None:
-            # Filtra las muestras por el nombre de la categoría (insensible a mayúsculas)
-            muestras = self.queryset.filter(Categoria__name__icontains=categoria_name)
-        else:
-            # Devuelve un error si no se proporciona una categoría válida
-            return Response({"error": "No se ha proporcionado una categoría"}, status=status.HTTP_400_BAD_REQUEST)
+        # Imprimir los datos recibidos, solo los que no son archivos
+        print("Datos recibidos en la solicitud (sin archivos):", json.dumps(filtered_data, indent=4))
 
-        # Serializa las muestras filtradas y las devuelve como respuesta
-        serializer = self.get_serializer(muestras, many=True)
-        return Response(serializer.data)
+        # Ahora pasar los datos filtrados al serializador
+        serializer = self.get_serializer(data=filtered_data)
 
+        # Comprobar si el serializador es válido
+        if not serializer.is_valid():
+            print("Errores de validación:", serializer.errors)  # Mostrar los errores de validación
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Crear el objeto usando el serializador
+        self.perform_create(serializer)
+
+        # Devolver la respuesta
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 # Función para listar capturas asociadas a una muestra específica
 def lista_capturas_muestra(request, muestra_id):
     # Recupera la muestra o lanza un error si no existe

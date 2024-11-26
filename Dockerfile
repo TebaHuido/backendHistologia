@@ -33,6 +33,10 @@ RUN npm install --legacy-peer-deps --verbose
 # Construir la aplicación Angular para producción
 RUN ng build
 
+# Crear el directorio 'images' dentro de Nginx y asignar los permisos adecuados
+RUN mkdir -p /usr/share/nginx/html/images && \
+    chown -R www-data:www-data /usr/share/nginx/html/images
+
 # Exponer puertos para Nginx, que manejará tanto el frontend como el backend
 EXPOSE 80
 EXPOSE 8000
