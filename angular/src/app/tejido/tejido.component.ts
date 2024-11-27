@@ -17,7 +17,7 @@ export class TejidoComponent implements OnInit {
   imagenSeleccionada: { image: string } | undefined;
 
   constructor(private route: ActivatedRoute, private api: ApiService) { }
-  imageUrl = 'http://localhost:8011/images/f4147446-5ef3-4268-9296-bd1d86f29bb2.jpg';
+  imageUrl = 'http://localhost:80/images/f4147446-5ef3-4268-9296-bd1d86f29bb2.jpg';
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -35,7 +35,7 @@ export class TejidoComponent implements OnInit {
           const originalUrl = tejido.capturas[0].image; // URL original
           const imageName = originalUrl.substring(originalUrl.lastIndexOf('/') + 1); // Obtiene el nombre del archivo
           console.log('Imagen seleccionada:', imageName);
-          this.imagenSeleccionada = { image: `http://localhost:8011/images/${imageName}` }; // Cambia la URL
+          this.imagenSeleccionada = { image: `http://localhost:80/images/${imageName}` }; // Cambia la URL
         } else {
           console.warn('No se encontraron capturas en el tejido.');
         }
@@ -51,7 +51,7 @@ export class TejidoComponent implements OnInit {
     // Cambiar la URL de la imagen a la nueva dirección
     const originalUrl = captura.image;
     const imageName = originalUrl.substring(originalUrl.lastIndexOf('/') + 1);
-    this.imagenSeleccionada = { image: `http://localhost:8011/images/${imageName}` };
+    this.imagenSeleccionada = { image: `http://localhost:80/images/${imageName}` };
   }
 
   selectCategory(arg0: string) {

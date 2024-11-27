@@ -62,10 +62,11 @@ class MuestraSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(),
         write_only=True  # Solo para crear
     )
+    sistema = serializers.SerializerMethodField()  # Campo para el sistema asociado
 
     class Meta:
         model = Muestra
-        fields = ['id', 'name', 'categoria', 'organo', 'images', 'imagenUrl']  # Incluye imagenUrl en la respuesta
+        fields = ['id', 'name', 'categoria', 'organo', 'sistema', 'images', 'imagenUrl']  # Añadimos el campo 'sistema'
 
     def validate_categoria(self, value):
         """
@@ -112,12 +113,24 @@ class MuestraSerializer(serializers.ModelSerializer):
         """
         Obtenemos la URL de la primera captura asociada a la muestra.
         """
-        # Accedemos a las capturas de la muestra a través de la relación inversa
-        # Esto usa el atributo 'captura_set' que Django genera automáticamente para relaciones de ForeignKey
         captura = obj.captura_set.first()  # Obtiene la primera captura asociada
         if captura:
             return captura.image.url
         return None
+
+    def get_sistema(self, obj):
+        """
+        Obtenemos los sistemas de los órganos asociados a la muestra.
+        """
+        # Extraemos los sistemas de los órganos relacionados
+        sistemas = set()
+        for organo in obj.organo.all():
+            if organo.sistema:
+                sistemas.add(organo.sistema.name)  # Asegúrate de acceder al nombre del sistema
+
+        # Devolvemos los sistemas relacionados, como lista de nombres
+        return list(sistemas) if sistemas else []
+
 
 class LoteSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,14 +1,14 @@
 <!-- home.component.html -->
 <div class="cuerpo">
   <div class="filters">
-    <app-filter 
+    <app-filter
       [label]="'Categorias'" 
-      [allItems]="filteredTejidosItems" 
+      [allItems]="filteredTejidosItems"
       (filterChange)="filterMuestras($event)">
     </app-filter>
     <app-filter 
-      [label]="'Sisttemas'" 
-      [allItems]="filteredTejidosItems" 
+      [label]="'Sistemas'" 
+      [allItems]="sistemasUnicosFormateados"
       (filterChange)="filterMuestras($event)">
     </app-filter>
     <app-filter 
@@ -34,7 +34,7 @@
       <!-- Filtra las muestras por el sistema actual y muestra todas las muestras -->
       <div class="orden">
         <div *ngFor="let muestra of getMuestrasPorSistema(sistema)" class="orden-content">
-          <img (click)="drawPoint($event)" [src]="muestra.imagenUrl">
+          <img (click)="drawPoint($event)" [src]="'http://localhost:80' + muestra.imagenUrl">
           <a [href]="'http://localhost:4200/tejido/' + muestra.id" class="list-group-item">
             {{ muestra.name }}
           </a>
@@ -46,7 +46,7 @@
       <p class="tissue">Sin sistema</p>
       <div class="orden">
         <div *ngFor="let muestra of getMuestrasSinSistema()" class="orden-content">
-          <img (click)="drawPoint($event)" [src]="muestra.imagenUrl">
+          <img (click)="drawPoint($event)" [src]="'http://localhost:80'+muestra.imagenUrl">
           <a [href]="'http://localhost:4200/tejido/' + muestra.id" class="list-group-item">
             {{ muestra.name }}
           </a>

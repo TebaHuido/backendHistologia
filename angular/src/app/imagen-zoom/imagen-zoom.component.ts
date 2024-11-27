@@ -26,8 +26,7 @@ export class ImagenZoomComponent {
   showLabels: boolean = true;
 
   @ViewChild('imageContainer', { static: true }) imageContainer!: ElementRef;
-  @ViewChild('imageElement', { static: true }) imageElement!: ElementRef;
-
+  @ViewChild('imageElement', { static: true }) imageElement!: ElementRef<HTMLImageElement>;
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {

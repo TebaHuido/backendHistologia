@@ -17,8 +17,8 @@ export class HomeComponent implements OnInit {
   sistemasUnicos: string[] = [];
   filteredTagsItems: { nombre: string }[] = [];
   constructor(private api: ApiService) {}
-
   filteredTejidosItems: { nombre: string }[] = [];
+  sistemasUnicosFormateados: { nombre: string }[] = [];
   ngOnInit(): void {
     this.api.getTejidos('all').subscribe({
       next: (tejidos: Tejido[]) => {
@@ -61,6 +61,10 @@ export class HomeComponent implements OnInit {
     });
     this.sistemasUnicos = Array.from(sistemasSet);
     console.log('Sistemas únicos:', this.sistemasUnicos);
+  
+    // Formatear los sistemas únicos después de actualizarlos
+    this.sistemasUnicosFormateados = this.sistemasUnicos.map(sistema => ({ nombre: sistema }));
+    console.log('Sistemas únicos formateados:', this.sistemasUnicosFormateados);
   }
 
   drawPoint(event: MouseEvent) {
