@@ -130,6 +130,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# settings.py
+
+
+# Define la ruta completa a la carpeta donde Nginx almacena los archivos
+MEDIA_ROOT = os.path.join(BASE_DIR, '../../../share/nginx/html/images')
+
+# Define la URL pública para acceder a los archivos (en Nginx)
 MEDIA_URL = '/images/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'images')

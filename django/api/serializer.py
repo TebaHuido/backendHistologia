@@ -31,6 +31,7 @@ class OrganoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class CapturaSerializer(serializers.ModelSerializer):
+    #cd /usr/share/nginx/html
     image = serializers.SerializerMethodField()
 
     class Meta:
@@ -39,44 +40,84 @@ class CapturaSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         relative_url = obj.image.url
-        if relative_url.startswith('/muestras/'):
-            relative_url = relative_url[len('/muestras/'):]
-        server_url = 'http://localhost:80/images'
-        full_url = f"{server_url}/{relative_url}"
+        server_url = 'http://localhost:80'
+        full_url = f"{server_url}{relative_url}"
         return full_url
 
+from rest_framework import serializers
+from .models import Muestra, Categoria, Organo, Captura
+
+
 class MuestraSerializer(serializers.ModelSerializer):
-    images = CapturaSerializer(many=True)  # Para manejar las imágenes
-    organo = OrganoSerializer(many=True)   # Relación ManyToMany con Organo
-    categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all(), many=True)
+    imagenUrl = serializers.SerializerMethodField()  # Para incluir la URL de la imagen
+    categoria = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        write_only=True  # Solo se usará para crear
+    )
+    organo = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        write_only=True  # Solo se usará para crear
+    )
+    images = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True  # Solo para crear
+    )
 
     class Meta:
         model = Muestra
-        fields = ['id', 'name', 'categoria', 'organo', 'images']
+        fields = ['id', 'name', 'categoria', 'organo', 'images', 'imagenUrl']  # Incluye imagenUrl en la respuesta
+
+    def validate_categoria(self, value):
+        """
+        Validamos las categorías, creando si no existen.
+        """
+        categorias = []
+        for name in value:
+            categoria, created = Categoria.objects.get_or_create(name=name)
+            categorias.append(categoria)
+        return categorias
+
+    def validate_organo(self, value):
+        """
+        Validamos los órganos, creando si no existen.
+        """
+        organos = []
+        for name in value:
+            organo, created = Organo.objects.get_or_create(name=name)
+            organos.append(organo)
+        return organos
 
     def create(self, validated_data):
-        images_data = validated_data.pop('images')
-        organo_data = validated_data.pop('organo')
-        categoria_data = validated_data.pop('categoria')
-
-        # Crear la muestra
+        """
+        Creamos la muestra, asignando categorías, órganos e imágenes.
+        """
+        categoria_names = validated_data.pop('categoria')
+        organo_names = validated_data.pop('organo')
+        images = validated_data.pop('images')
+        
+        # Creamos la muestra
         muestra = Muestra.objects.create(**validated_data)
-
-        # Asociar las categorías
-        muestra.categoria.set(categoria_data)
-
-        # Crear y asociar los órganos
-        for organo in organo_data:
-            organo_instance = Organo.objects.create(**organo)
-            muestra.organo.add(organo_instance)
-
-        # Crear y asociar las imágenes
-        for image_data in images_data:
-            image_instance = Captura.objects.create(**image_data)
-            muestra.images.add(image_instance)
-
+        
+        # Asociamos las categorías y órganos a la muestra
+        muestra.Categoria.set(categoria_names)
+        muestra.organo.set(organo_names)
+        
+        # Creamos las capturas para las imágenes y las asociamos a la muestra
+        for image in images:
+            captura = Captura.objects.create(image=image, muestra=muestra)
+        
         return muestra
 
+    def get_imagenUrl(self, obj):
+        """
+        Obtenemos la URL de la primera captura asociada a la muestra.
+        """
+        # Accedemos a las capturas de la muestra a través de la relación inversa
+        # Esto usa el atributo 'captura_set' que Django genera automáticamente para relaciones de ForeignKey
+        captura = obj.captura_set.first()  # Obtiene la primera captura asociada
+        if captura:
+            return captura.image.url
+        return None
 
 class LoteSerializer(serializers.ModelSerializer):
     class Meta:

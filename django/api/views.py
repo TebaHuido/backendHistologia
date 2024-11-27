@@ -35,39 +35,33 @@ class CapturaViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CapturaSerializer
 
 
-def filter_files_from_data(data):
-    """Filtra los archivos InMemoryUploadedFile de los datos."""
-    # Devuelve un diccionario con los datos que no son archivos
-    return {
-        key: value
-        for key, value in data.items()
-        if not isinstance(value, InMemoryUploadedFile)
-    }
-
 class MuestraViewSet(viewsets.ModelViewSet):
     queryset = Muestra.objects.all()
     serializer_class = MuestraSerializer
 
     def create(self, request, *args, **kwargs):
-        # Filtrar los archivos de request.data
-        filtered_data = filter_files_from_data(request.data)
+        # Crear instancia del serializador con los datos recibidos
+        serializer = self.get_serializer(data=request.data)
 
-        # Imprimir los datos recibidos, solo los que no son archivos
-        print("Datos recibidos en la solicitud (sin archivos):", json.dumps(filtered_data, indent=4))
-
-        # Ahora pasar los datos filtrados al serializador
-        serializer = self.get_serializer(data=filtered_data)
-
-        # Comprobar si el serializador es válido
+        # Validar los datos
         if not serializer.is_valid():
-            print("Errores de validación:", serializer.errors)  # Mostrar los errores de validación
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Crear el objeto usando el serializador
+        # Guardar los datos si son válidos
         self.perform_create(serializer)
 
-        # Devolver la respuesta
+        # Devolver la respuesta con los datos creados
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    @action(detail=False, methods=['get'])
+    def por_categoria(self, request):
+        category = request.query_params.get('category', 'all')
+        # Lógica para filtrar por categoría
+        if category == 'all':
+            muestras = Muestra.objects.all()
+        else:
+            muestras = Muestra.objects.filter(categoria=categoria)
+        serializer = MuestraSerializer(muestras, many=True)
+        return Response(serializer.data)
 # Función para listar capturas asociadas a una muestra específica
 def lista_capturas_muestra(request, muestra_id):
     # Recupera la muestra o lanza un error si no existe

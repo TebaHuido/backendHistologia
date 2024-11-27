@@ -11,7 +11,7 @@ from django.dispatch import receiver
 def generate_filename(instance, filename):
     extension = filename.split('.')[-1]
     new_filename = f"{uuid.uuid4()}.{extension}"
-    return os.path.join('muestras/', new_filename)
+    return new_filename
 
 def default_name():
      return f"Captura-{uuid.uuid4()}"
