@@ -1,6 +1,7 @@
 # Importa herramientas de Django para manejar vistas y recuperar objetos
 from django.shortcuts import render, get_object_or_404
 import json
+from rest_framework.views import APIView
 # Importa módulos de DRF (Django Rest Framework) para crear API y vistas
 from rest_framework import viewsets, generics ,status
 from rest_framework.decorators import action
@@ -20,6 +21,18 @@ from .serializer import (
 )
 
 # Vista genérica para recuperar el detalle de una muestra específica por ID
+class FilterView(APIView):
+    def get(self, request, *args, **kwargs):
+        categorias = Categoria.objects.all()
+        organos = Organo.objects.all()
+
+        categorias_serializadas = CategoriaSerializer(categorias, many=True).data
+        organos_serializados = OrganoSerializer(organos, many=True).data
+        return Response({
+            "categorias": categorias_serializadas,
+            "organos": organos_serializados,
+        })
+
 class MuestraDetailAPIView(generics.RetrieveAPIView):
     # Define el conjunto de datos que consulta
     queryset = Muestra.objects.all()

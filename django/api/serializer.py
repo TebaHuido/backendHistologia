@@ -44,8 +44,6 @@ class CapturaSerializer(serializers.ModelSerializer):
         full_url = f"{server_url}{relative_url}"
         return full_url
 
-from rest_framework import serializers
-from .models import Muestra, Categoria, Organo, Captura
 
 
 class MuestraSerializer(serializers.ModelSerializer):

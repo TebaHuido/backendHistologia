@@ -99,11 +99,11 @@ export class UplimageComponent implements OnInit {
     const newCategory = this.sampleForm.get('newCategory')?.value;
   
     if (this.isCreatingNewCategory && newCategory) {
-      formData.append('categoria', JSON.stringify([newCategory])); // Agregar nueva categoría como lista
+      formData.append('categoria', newCategory); // Agregar nueva categoría como lista
     } else if (selectedCategory) {
-      formData.append('categoria', JSON.stringify([selectedCategory])); // Agregar categoría seleccionada como lista
+      formData.append('categoria', selectedCategory); // Agregar categoría seleccionada como lista
     } else {
-      formData.append('categoria', JSON.stringify([])); // Enviar lista vacía si no hay selección
+      formData.append('categoria', '') // Enviar lista vacía si no hay selección
     }
   
     // Manejo de órganos (también en formato de lista)
@@ -111,11 +111,11 @@ export class UplimageComponent implements OnInit {
     const newOrgano = this.sampleForm.get('newOrgano')?.value;
   
     if (this.isCreatingNewOrgano && newOrgano) {
-      formData.append('organo', JSON.stringify([newOrgano]));
+      formData.append('organo', newOrgano);
     } else if (selectedOrgano) {
-      formData.append('organo', JSON.stringify([selectedOrgano]));
+      formData.append('organo', selectedOrgano);
     } else {
-      formData.append('organo', JSON.stringify([]));
+      formData.append('organo', '');
     }
   
     // Manejo de imágenes

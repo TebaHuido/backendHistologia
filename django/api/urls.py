@@ -25,7 +25,7 @@ urlpatterns = [
     path('imagenes/', views.lista_imagenes, name='lista_imagenes'),
     path('muestras/por_categoria/', views.MuestraViewSet.as_view({'get': 'por_categoria'}), name='muestras_por_categoria'),
     path('lista_capturas_muestra/<int:muestra_id>/', views.lista_capturas_muestra, name='lista_capturas_muestra'),
-    
+    path('filters/', views.FilterView.as_view(), name='filter'),
     # Incluir rutas generadas por el router
     path('', include(router.urls)),
 ]
