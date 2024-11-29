@@ -29,7 +29,7 @@
       <label for="organo">Órgano:</label>
       <select id="organo" formControlName="organo" (change)="onOrganoChange($event)">
         <option value="" disabled>Selecciona un órgano</option>
-        <option *ngFor="let organo of organos" [value]="organo.id">{{ organo.orgname }}</option>
+        <option *ngFor="let organo of organos" [value]="organo.id">{{ organo.name }}</option>
         <option value="new">Crear nuevo órgano</option>
       </select>
     </div>

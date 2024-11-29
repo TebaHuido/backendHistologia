@@ -94,31 +94,34 @@ export class UplimageComponent implements OnInit {
     const formData = new FormData();
     formData.append('name', this.sampleForm.get('name')?.value);
   
-    // Asegurarse de que `categoria` siempre sea una lista
+    // Categorías
     const selectedCategory = this.sampleForm.get('category')?.value;
     const newCategory = this.sampleForm.get('newCategory')?.value;
-  
     if (this.isCreatingNewCategory && newCategory) {
-      formData.append('categoria', newCategory); // Agregar nueva categoría como lista
+      formData.append('categoria', newCategory);
     } else if (selectedCategory) {
-      formData.append('categoria', selectedCategory); // Agregar categoría seleccionada como lista
-    } else {
-      formData.append('categoria', '') // Enviar lista vacía si no hay selección
+      formData.append('categoria', selectedCategory);
     }
   
-    // Manejo de órganos (también en formato de lista)
+    // Órganos
     const selectedOrgano = this.sampleForm.get('organo')?.value;
     const newOrgano = this.sampleForm.get('newOrgano')?.value;
-  
     if (this.isCreatingNewOrgano && newOrgano) {
       formData.append('organo', newOrgano);
     } else if (selectedOrgano) {
       formData.append('organo', selectedOrgano);
-    } else {
-      formData.append('organo', '');
     }
   
-    // Manejo de imágenes
+    // Sistemas (Nuevo)
+    const selectedSistema = this.sampleForm.get('sistema')?.value;
+    const newSistema = this.sampleForm.get('newSistema')?.value;
+    if (this.isCreatingNewSistema && newSistema) {
+      formData.append('sistema', newSistema); // Nuevo sistema
+    } else if (selectedSistema) {
+      formData.append('sistema', selectedSistema); // Sistema seleccionado
+    }
+  
+    // Imágenes
     this.selectedFiles.forEach((file, index) => {
       formData.append('images', file);
       formData.append('image_names', this.imageFormArray.at(index).value || '');
@@ -135,6 +138,7 @@ export class UplimageComponent implements OnInit {
       }
     });
   }
+  
 
   resetForm() {
     this.sampleForm.reset();

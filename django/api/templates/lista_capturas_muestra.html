@@ -18,7 +18,7 @@
             <p><strong>Nombre:</strong> {{ muestra.name }}</p>
             <p><strong>Categorías:</strong> {% for categoria in categorias %} {{ categoria.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
             <p><strong>Sistemas:</strong> {% for sistema in sistemas %} {{ sistema }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-            <p><strong>Órganos:</strong> {% for organo in organos %} {{ organo.orgname }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            <p><strong>Órganos:</strong> {% for organo in organos %} {{ organo.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
         </div>
         <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for captura in capturas %}

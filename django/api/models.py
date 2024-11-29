@@ -61,7 +61,7 @@ class Organo(models.Model):
     sistema = models.ManyToManyField(Sistema, blank=True)
 
     def __str__(self):
-        return f"Órgano: {self.orgname}"
+        return f"Órgano: {self.name}"
 
 class Captura(models.Model):
     aumento = models.FloatField(default=0.0, null=True, blank=True)

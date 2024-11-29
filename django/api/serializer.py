@@ -60,11 +60,11 @@ class MuestraSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(),
         write_only=True  # Solo para crear
     )
-    sistema = serializers.SerializerMethodField()  # Campo para el sistema asociado
+    sistema = serializers.SerializerMethodField()  # Campo para los sistemas asociados
 
     class Meta:
         model = Muestra
-        fields = ['id', 'name', 'categoria', 'organo', 'sistema', 'images', 'imagenUrl']  # Añadimos el campo 'sistema'
+        fields = ['id', 'name', 'categoria', 'organo', 'sistema', 'images', 'imagenUrl']
 
     def validate_categoria(self, value):
         """
@@ -72,7 +72,8 @@ class MuestraSerializer(serializers.ModelSerializer):
         """
         categorias = []
         for name in value:
-            categoria, created = Categoria.objects.get_or_create(name=name)
+            name_normalized = name.strip().lower()  # Normaliza los nombres
+            categoria, _ = Categoria.objects.get_or_create(name=name_normalized)
             categorias.append(categoria)
         return categorias
 
@@ -82,30 +83,58 @@ class MuestraSerializer(serializers.ModelSerializer):
         """
         organos = []
         for name in value:
-            organo, created = Organo.objects.get_or_create(name=name)
+            name_normalized = name.strip().lower()  # Normaliza los nombres
+            organo, _ = Organo.objects.get_or_create(name=name_normalized)
             organos.append(organo)
         return organos
 
     def create(self, validated_data):
         """
-        Creamos la muestra, asignando categorías, órganos e imágenes.
+        Creamos la muestra, asignando categorías, órganos, sistemas e imágenes.
         """
-        categoria_names = validated_data.pop('categoria')
-        organo_names = validated_data.pop('organo')
+        categoria_instances = validated_data.pop('categoria')
+        organo_instances = validated_data.pop('organo')
         images = validated_data.pop('images')
-        
+
         # Creamos la muestra
         muestra = Muestra.objects.create(**validated_data)
-        
-        # Asociamos las categorías y órganos a la muestra
-        muestra.Categoria.set(categoria_names)
-        muestra.organo.set(organo_names)
-        
-        # Creamos las capturas para las imágenes y las asociamos a la muestra
+
+        # Asociamos categorías y órganos a la muestra
+        muestra.Categoria.set(categoria_instances)
+        muestra.organo.set(organo_instances)
+
+        # Asociamos los sistemas de los órganos a la muestra
+        sistemas = set()
+        for organo in organo_instances:
+            sistemas.update(organo.sistema.all())  # Extrae todos los sistemas asociados
+
+        # Si `sistemas` es una relación directa de `Muestra`
+        if hasattr(muestra, 'sistemas'):
+            muestra.sistemas.set(sistemas)
+
+        # Creamos las capturas asociadas
         for image in images:
-            captura = Captura.objects.create(image=image, muestra=muestra)
-        
+            Captura.objects.create(image=image, muestra=muestra)
+
         return muestra
+
+    def get_imagenUrl(self, obj):
+        """
+        Obtenemos la URL de la primera captura asociada a la muestra.
+        """
+        captura = obj.captura_set.first()  # Obtiene la primera captura asociada
+        if captura:
+            return captura.image.url
+        return None
+
+    def get_sistema(self, obj):
+        """
+        Obtenemos los sistemas relacionados con los órganos de la muestra.
+        """
+        sistemas = set()
+        for organo in obj.organo.all():
+            sistemas.update(organo.sistema.values_list('name', flat=True))
+        return list(sistemas)
 
     def get_imagenUrl(self, obj):
         """
@@ -120,14 +149,11 @@ class MuestraSerializer(serializers.ModelSerializer):
         """
         Obtenemos los sistemas de los órganos asociados a la muestra.
         """
-        # Extraemos los sistemas de los órganos relacionados
         sistemas = set()
         for organo in obj.organo.all():
             if organo.sistema:
                 sistemas.add(organo.sistema.name)  # Asegúrate de acceder al nombre del sistema
-
-        # Devolvemos los sistemas relacionados, como lista de nombres
-        return list(sistemas) if sistemas else []
+        return list(sistemas)
 
 
 class LoteSerializer(serializers.ModelSerializer):
