@@ -66,6 +66,7 @@ class MuestraViewSet(viewsets.ModelViewSet):
         # Devolver la respuesta con los datos creados
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     @action(detail=False, methods=['get'])
+    
     def por_categoria(self, request):
         category = request.query_params.get('category', 'all')
         # Lógica para filtrar por categoría
