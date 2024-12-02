@@ -16,9 +16,9 @@ cd /usr/src/app/django
 python manage.py runserver 0.0.0.0:8000 &
 DJANGO_PID=$!
 
-# Iniciar el servidor Angular
+# Iniciar el servidor Angular con redirección de logs
 cd /usr/src/app/angular
-npx ng serve --host 0.0.0.0 --port 4200 &
+npx ng serve --host 0.0.0.0 --port 4200 | sed -u 's/Local:.*4200/Local:   http:\/\/localhost:80/' &
 ANGULAR_PID=$!
 
 # Iniciar Nginx en modo no daemon

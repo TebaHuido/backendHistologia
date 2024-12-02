@@ -115,14 +115,14 @@ class MuestraSerializer(serializers.ModelSerializer):
         # Creamos la muestra
         muestra = Muestra.objects.create(**validated_data)
 
-        # Asociamos categorías, órganos y tinciones
+        # Asociamos categorías, órganos, sistemas y tinciones
         muestra.Categoria.set(categoria_instances)
         muestra.organo.set(organo_instances)
         muestra.tincion.set(tincion_instances)
-        muestra.tag.set(tag_instances)
+        
         for organo in organo_instances:
             organo.sistema.set(sistema_instances)
-
+        
         # Asociamos las imágenes a las capturas
         for image in images:
             Captura.objects.create(image=image, muestra=muestra)
