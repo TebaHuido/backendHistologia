@@ -73,7 +73,7 @@ class MuestraViewSet(viewsets.ModelViewSet):
         if category == 'all':
             muestras = Muestra.objects.all()
         else:
-            muestras = Muestra.objects.filter(categoria=categoria)
+            muestras = Muestra.objects.filter(categoria=category)
         serializer = MuestraSerializer(muestras, many=True)
         return Response(serializer.data)
 # Función para listar capturas asociadas a una muestra específica
