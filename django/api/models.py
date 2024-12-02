@@ -82,13 +82,14 @@ class Captura(models.Model):
 class Tincion(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
     descripcion = models.CharField(max_length=1000, verbose_name="Descripcion")
-    captura = models.ManyToManyField(Captura, blank=True)
 
     def __str__(self):
         return f"Tinción: {self.name} ({self.descripcion})"
 
 class Tag (models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
+    def __str__(self):
+        return f"Tag: {self.name}"
 
 class Muestra(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")

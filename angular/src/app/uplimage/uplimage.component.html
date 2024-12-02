@@ -7,6 +7,19 @@
       <label for="sampleName">Nombre de la Muestra:</label>
       <input id="sampleName" type="text" formControlName="name" placeholder="Nombre de la muestra" />
     </div>
+    <!-- Selección de Categoría -->
+    <div>
+      <label for="tincion">Tincion:</label>
+      <select id="tincion" formControlName="tincion" (change)="onTincionChange($event)">
+        <option value="" disabled>Selecciona una Tincion</option>
+        <option *ngFor="let tincion of tinciones" [value]="tincion.id">{{ tincion.name }}</option>
+        <option value="new">Crear nueva Tincion</option>
+      </select>
+    </div>
+    <div *ngIf="isCreatingNewTincion">
+      <label for="newTincion">Nueva Categoría:</label>
+      <input id="newTincion" type="text" formControlName="newTincion" placeholder="Nombre de la nueva tincion" />
+    </div>
 
     <!-- Selección de Categoría -->
     <div>

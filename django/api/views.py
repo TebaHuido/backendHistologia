@@ -10,27 +10,33 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 # Importa los modelos que serán utilizados en las vistas
 from .models import (
     Profesor, Curso, Ayudante, Categoria, Sistema, Organo, 
-    Muestra, Lote, Alumno, Captura, Notas
+    Muestra, Lote, Alumno, Captura, Notas, Tag, Tincion
 )
 
 # Importa los serializers para transformar los datos en formatos adecuados para la API
 from .serializer import (
     MuestraSerializer2, NotaSerializer, CapturaSerializer, ProfesorSerializer, 
     CursoSerializer, AyudanteSerializer, CategoriaSerializer, SistemaSerializer, 
-    OrganoSerializer, MuestraSerializer, LoteSerializer, AlumnoSerializer,TincionSerializer, TincionSerializer
+    OrganoSerializer, MuestraSerializer, LoteSerializer, AlumnoSerializer,
+    TincionSerializer, TagsSerializer
 )
 
 # Vista genérica para recuperar el detalle de una muestra específica por ID
 class FilterView(APIView):
     def get(self, request, *args, **kwargs):
-        categorias = Categoria.objects.all()
-        organos = Organo.objects.all()
 
-        categorias_serializadas = CategoriaSerializer(categorias, many=True).data
-        organos_serializados = OrganoSerializer(organos, many=True).data
+        categorias_serializadas = CategoriaSerializer(Categoria.objects.all(), many=True).data
+        organos_serializados = OrganoSerializer(Organo.objects.all(), many=True).data
+        sistemas_serializados = SistemaSerializer(Sistema.objects.all(), many=True).data
+        tinciones_serializadas = TincionSerializer(Notas.objects.all(), many=True).data
+        tags_serializados = TagsSerializer(Tag.objects.all(), many=True).data
+
         return Response({
             "categorias": categorias_serializadas,
             "organos": organos_serializados,
+            "sistemas": sistemas_serializados,
+            "tinciones": tinciones_serializadas,
+            "tags": tags_serializados
         })
 
 class MuestraDetailAPIView(generics.RetrieveAPIView):
@@ -201,3 +207,6 @@ class MuestraFilterAPIView(generics.ListAPIView):
             queryset = queryset.filter(notas__tags__id=tag_id)
 
         return queryset.distinct()
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagsSerializer

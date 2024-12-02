@@ -15,9 +15,11 @@ export class UplimageComponent implements OnInit {
   categories: any[] = [];
   organos: any[] = [];
   sistemas: any[] = [];
+  tinciones: any[] = [];
   isCreatingNewCategory = false;
   isCreatingNewOrgano = false;
   isCreatingNewSistema = false;
+  isCreatingNewTincion = false;
   selectedFiles: File[] = [];
 
   constructor(private fb: FormBuilder, private http: HttpClient) {
@@ -29,6 +31,8 @@ export class UplimageComponent implements OnInit {
       newOrgano: [''],
       sistema: ['', Validators.required],
       newSistema: [''],
+      tincion: ['', Validators.required],
+      newTincion: [''],
       images: this.fb.array([], Validators.required) // Validación para asegurar que se suban imágenes
     });
   }
@@ -37,8 +41,17 @@ export class UplimageComponent implements OnInit {
     this.loadCategories();
     this.loadOrganos();
     this.loadSistemas();
+    this.loadTinciones();
   }
 
+
+
+  loadTinciones() {
+    this.http.get('http://localhost:8000/tinciones/').subscribe((data: any) => {
+      this.tinciones = data;
+    });
+  }
+  
   loadCategories() {
     this.http.get('http://localhost:8000/categorias/').subscribe((data: any) => {
       this.categories = data;
@@ -55,6 +68,11 @@ export class UplimageComponent implements OnInit {
     this.http.get('http://localhost:8000/sistemas/').subscribe((data: any) => {
       this.sistemas = data;
     });
+  }
+
+  onTincionChange(event: any) {
+    const value = event.target.value;
+    this.isCreatingNewTincion = value === 'new';
   }
 
   onCategoryChange(event: any) {
@@ -112,15 +130,23 @@ export class UplimageComponent implements OnInit {
       formData.append('organo', selectedOrgano);
     }
   
-    // Sistemas (Nuevo)
+    // Sistemas
     const selectedSistema = this.sampleForm.get('sistema')?.value;
     const newSistema = this.sampleForm.get('newSistema')?.value;
     if (this.isCreatingNewSistema && newSistema) {
-      formData.append('sistema', newSistema); // Nuevo sistema
+      formData.append('sistema', newSistema);
     } else if (selectedSistema) {
-      formData.append('sistema', selectedSistema); // Sistema seleccionado
+      formData.append('sistema', selectedSistema);
     }
-  
+    
+    // Tinciones
+    const selectedTincion = this.sampleForm.get('tincion')?.value;
+    const newTincion = this.sampleForm.get('newTincion')?.value;
+    if (this.isCreatingNewTincion && newTincion) {
+      formData.append('tincion', newTincion);
+    } else if (selectedTincion) {
+      formData.append('tincion', selectedTincion);
+    }
     // Imágenes
     this.selectedFiles.forEach((file, index) => {
       formData.append('images', file);
@@ -138,6 +164,7 @@ export class UplimageComponent implements OnInit {
       }
     });
   }
+  
   
 
   resetForm() {

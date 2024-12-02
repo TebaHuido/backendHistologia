@@ -17,7 +17,7 @@ router.register(r'lotes', views.LoteViewSet, basename='lotes')
 router.register(r'alumnos', views.AlumnoViewSet, basename='alumnos')
 router.register(r'capturas', views.CapturaViewSet, basename='capturas')
 router.register(r'tinciones', views.TincionViewSet, basename='tinciones')  # Evitar duplicados
-
+router.register(r'tags', views.TagViewSet, basename='tags')
 # URLs adicionales
 urlpatterns = [
     # Rutas personalizadas

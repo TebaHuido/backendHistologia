@@ -56,18 +56,22 @@ class MuestraSerializer(serializers.ModelSerializer):
         child=serializers.CharField(max_length=100),
         write_only=True  # Solo se usará para crear
     )
-    images = serializers.ListField(
-        child=serializers.ImageField(),
-        write_only=True  # Solo para crear
-    )
     sistema = serializers.ListField(
         child=serializers.CharField(max_length=100),
         write_only=True  # Solo se usará para crear
     )
+    tincion = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        write_only=True  # Solo se usará para crear
+    )
+    images = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True  # Solo para crear
+    )
 
     class Meta:
         model = Muestra
-        fields = ['id', 'name', 'categoria', 'organo', 'sistema', 'images', 'imagenUrl']
+        fields = ['id', 'name', 'categoria', 'organo', 'sistema', 'tincion', 'images', 'imagenUrl']
 
     def validate_categoria(self, value):
         categorias = []
@@ -93,20 +97,29 @@ class MuestraSerializer(serializers.ModelSerializer):
             sistemas.append(sistema)
         return sistemas
 
+    def validate_tincion(self, value):
+        tinciones = []
+        for name in value:
+            name_normalized = name.strip().lower()
+            tincion, _ = Tincion.objects.get_or_create(name=name_normalized)
+            tinciones.append(tincion)
+        return tinciones
+
     def create(self, validated_data):
         categoria_instances = validated_data.pop('categoria')
         organo_instances = validated_data.pop('organo')
         sistema_instances = validated_data.pop('sistema')
+        tincion_instances = validated_data.pop('tincion')
         images = validated_data.pop('images')
 
         # Creamos la muestra
         muestra = Muestra.objects.create(**validated_data)
 
-        # Asociamos categorías y órganos
+        # Asociamos categorías, órganos y tinciones
         muestra.Categoria.set(categoria_instances)
         muestra.organo.set(organo_instances)
-
-        # Asociamos los sistemas de los órganos a la muestra
+        muestra.tincion.set(tincion_instances)
+        muestra.tag.set(tag_instances)
         for organo in organo_instances:
             organo.sistema.set(sistema_instances)
 
@@ -124,16 +137,6 @@ class MuestraSerializer(serializers.ModelSerializer):
         if captura:
             return captura.image.url
         return None
-
-    def get_sistema(self, obj):
-        """
-        Obtenemos los sistemas de los órganos asociados a la muestra.
-        """
-        sistemas = set()
-        for organo in obj.organo.all():
-            if organo.sistema:
-                sistemas.add(organo.sistema.name)  # Asegúrate de acceder al nombre del sistema
-        return list(sistemas)
 
 
 
@@ -178,4 +181,8 @@ class MuestraSerializer2(serializers.ModelSerializer):
 class TincionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tincion
+        fields = '__all__'
+class TagsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
         fields = '__all__'
