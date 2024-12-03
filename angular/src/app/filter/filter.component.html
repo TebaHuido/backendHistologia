@@ -1,23 +1,21 @@
 <div class="filterdody">
-  <div class="filter">
-    <label [for]="filterId">{{ label }}</label>
+  <div class="filter-container">
+    <label for="{{filterId}}">{{ label }}</label>
     <input
-      [id]="filterId"
+      id="{{filterId}}"
       type="text"
       placeholder="Buscar {{ label | lowercase }}..."
-      (input)="onSearch($event)" 
-      (focus)="showDropdown = true"  
+      (focus)="showAllItems()"
+      (input)="onSearch($event)"
       (blur)="onBlur()"
-      cla
     />
-    
-    <!-- Desplegable de resultados de búsqueda -->
     <div class="filter-list" *ngIf="showDropdown && filteredItems.length">
       <div
         class="filter-item"
         *ngFor="let item of filteredItems"
         [class.selected]="isSelected(item)"
-        (click)="toggleSelection(item)">
+        (click)="toggleSelection(item)"
+      >
         {{ item.nombre }}
       </div>
     </div>

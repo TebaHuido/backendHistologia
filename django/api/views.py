@@ -28,7 +28,7 @@ class FilterView(APIView):
         categorias_serializadas = CategoriaSerializer(Categoria.objects.all(), many=True).data
         organos_serializados = OrganoSerializer(Organo.objects.all(), many=True).data
         sistemas_serializados = SistemaSerializer(Sistema.objects.all(), many=True).data
-        tinciones_serializadas = TincionSerializer(Notas.objects.all(), many=True).data
+        tinciones_serializadas = TincionSerializer(Tincion.objects.all(), many=True).data  # Cambiado a Tincion
         tags_serializados = TagsSerializer(Tag.objects.all(), many=True).data
 
         return Response({

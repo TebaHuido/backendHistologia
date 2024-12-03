@@ -8,3 +8,6 @@ services:
       - "8000:8000"
       - "4200:4200"
     container_name: adnhisto
+    volumes:
+      - ./django/db:/usr/src/app/django/db
+      - ./images:/usr/share/nginx/html/images

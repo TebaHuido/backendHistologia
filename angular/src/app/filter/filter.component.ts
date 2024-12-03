@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input , Output, EventEmitter} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 // Definir la interfaz para los elementos que manejaremos
 interface Item {
@@ -30,10 +30,16 @@ export class FilterComponent {
   selectedItems: Item[] = [];  // Elementos seleccionados
   showDropdown = false;  // Controla si mostramos el dropdown de resultados
 
+  // Función para mostrar todos los elementos cuando se hace clic en el input
+  showAllItems() {
+    this.filteredItems = this.allItems;
+    this.showDropdown = true;
+  }
+
   // Función para filtrar los elementos basados en la búsqueda
   onSearch(event: any) {
     const searchTerm = event.target.value.toLowerCase();
-    this.filteredItems = this.allItems.filter(item => 
+    this.filteredItems = this.allItems.filter(item =>
       item.nombre.toLowerCase().includes(searchTerm)
     );
     this.showDropdown = this.filteredItems.length > 0;
@@ -63,8 +69,8 @@ export class FilterComponent {
       this.showDropdown = false;  // Cerramos el dropdown después de perder el foco
     }, 200);  // Retraso para asegurar que el click en el ítem no cierre el dropdown
   }
+
   removeSelection(item: Item) {
     this.selectedItems = this.selectedItems.filter(i => i !== item);
   }
-
 }
