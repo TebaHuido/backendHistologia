@@ -1,14 +1,33 @@
-label {
-  margin-right: 10px;
+/* Contenedor principal */
+.filter-container {
+  display: flex;
+  flex-direction: column; /* Alinea elementos verticalmente */
+  position: relative; /* Necesario para posicionar la lista */
 }
+
+.filter-container label {
+  margin-bottom: 8px; /* Espaciado entre el label y el input */
+}
+
+.filter-container input {
+  margin-bottom: 10px; /* Espaciado entre el input y la lista */
+  padding: 8px; /* Espaciado interno */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%; /* Ancho completo del contenedor */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho */
+}
+
 .filter-list {
-  max-height: 200px;
-  overflow-y: auto;
+  max-height: 200px; /* Altura máxima para la lista */
+  overflow-y: auto; /* Habilita scroll cuando hay muchos elementos */
   border: 1px solid #ccc;
   background-color: white;
-  position: absolute;
-  width: 10%;
-  z-index: 10;
+  position: absolute; /* La lista se posiciona relativa al contenedor */
+  top: 100%; /* Justo debajo del input */
+  width: 100%; /* Igual ancho que el input */
+  z-index: 10; /* Asegura que la lista aparezca encima de otros elementos */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destacar la lista */
 }
 
 .filter-item {
@@ -16,100 +35,39 @@ label {
   cursor: pointer;
 }
 
+.filter-item:hover {
+  background-color: #f1f1f1;
+}
+
 .filter-item.selected {
   background-color: #007bff;
   color: white;
 }
 
+/* Estilos para la lista de elementos seleccionados */
+.selected-list {
+  margin-top: 15px;
+}
+
 .selected-list ul {
   list-style-type: none;
   padding: 0;
-}
-
-.selected-list li {
-  padding: 4px;
-}
-.input-spacing {
-  margin-left: 10px;
-}
-.selected-list ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.selected-list li {
-  padding: 8px 12px;
-  margin: 4px 0;
-  border: 1px solid #ccc; /* Contorno gris */
-  border-radius: 20px; /* Bordes redondeados */
   display: flex;
-  align-items: center;
-  justify-content: space-between; /* Espaciado entre texto y botón */
-}
-
-.remove-btn {
-  background: none;
-  border: none;
-  color: red;
-  font-size: 14px;
-  margin-left: 8px;
-  cursor: pointer;
-}
-
-.remove-btn:hover {
-  color: darkred;
-}
-.selected-list ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Ajusta el ancho mínimo y máximo de los mosaicos */
+  flex-wrap: wrap; /* Permite que los elementos salten de línea */
   gap: 10px; /* Espaciado entre elementos */
-  list-style-type: none;
-  padding: 0;
   margin: 0;
 }
 
 .selected-list li {
-  padding: 8px 12px;
-  border: 1px solid #ccc; /* Contorno gris */
-  border-radius: 20px; /* Bordes redondeados */
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* Espaciado entre texto y botón */
-  background-color: #f9f9f9; /* Fondo claro */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para destacar los mosaicos */
-}
-
-.remove-btn {
-  background: none;
-  border: none;
-  color: red;
-  font-size: 14px;
-  margin-left: 8px;
-  cursor: pointer;
-}
-
-.remove-btn:hover {
-  color: darkred;
-}
-.selected-list ul {
-  display: flex; /* Flexbox para distribuir elementos */
-  flex-wrap: wrap; /* Permite que los elementos salten a la siguiente fila */
-  gap: 10px; /* Espaciado entre elementos */
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.selected-list li {
-  display: inline-flex; /* Para ajustar tamaño al contenido */
+  display: inline-flex; /* Se ajusta al contenido */
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
   border: 1px solid #ccc; /* Contorno gris */
   border-radius: 20px; /* Bordes redondeados */
   background-color: #f9f9f9; /* Fondo claro */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para destacar los mosaicos */
-  white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
 }
 
 .remove-btn {
@@ -123,8 +81,4 @@ label {
 
 .remove-btn:hover {
   color: darkred;
-}
-.filterdody {
-
-  margin-bottom: 20px;
 }

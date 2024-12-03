@@ -19,7 +19,6 @@ export class FilterComponent {
   @Input() label: string = 'Elemento';
 
   // Definimos el tipo 'Item[]' para las variables que almacenan arrays
-  filteredItems: Item[] = [];  // Los elementos filtrados
   @Input() allItems: Item[] = [  // Lista completa de elementos que podemos buscar
     { nombre: 'Elemento 1' },
     { nombre: 'Elemento 2' },
@@ -27,50 +26,40 @@ export class FilterComponent {
     { nombre: 'Elemento 4' },
     { nombre: 'Elemento 5' }
   ];
-  selectedItems: Item[] = [];  // Elementos seleccionados
-  showDropdown = false;  // Controla si mostramos el dropdown de resultados
-
-  // Función para mostrar todos los elementos cuando se hace clic en el input
+  showDropdown: boolean = false;
+  filteredItems: { nombre: string }[] = [];
+  selectedItems: { nombre: string }[] = [];
+  
   showAllItems() {
-    this.filteredItems = this.allItems;
+    this.filteredItems = [...this.allItems]; // Mostrar todos los elementos
     this.showDropdown = true;
   }
-
-  // Función para filtrar los elementos basados en la búsqueda
-  onSearch(event: any) {
-    const searchTerm = event.target.value.toLowerCase();
+  
+  onSearch(event: Event) {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
     this.filteredItems = this.allItems.filter(item =>
       item.nombre.toLowerCase().includes(searchTerm)
     );
-    this.showDropdown = this.filteredItems.length > 0;
-    this.filterChange.emit(searchTerm); // Emitimos el término de búsqueda
   }
-
-  // Función para manejar la selección de elementos
-  toggleSelection(item: Item) {
-    if (this.isSelected(item)) {
-      // Si el elemento ya está seleccionado, lo eliminamos
-      this.selectedItems = this.selectedItems.filter(i => i !== item);
-    } else {
-      // Si el elemento no está seleccionado, lo agregamos
-      this.selectedItems.push(item);
-    }
-    this.showDropdown = false;  // Ocultamos el dropdown después de la selección
-  }
-
-  // Verifica si un elemento está seleccionado
-  isSelected(item: Item): boolean {
-    return this.selectedItems.includes(item);
-  }
-
-  // Se llama cuando el input pierde el foco para cerrar el dropdown
+  
   onBlur() {
-    setTimeout(() => {
-      this.showDropdown = false;  // Cerramos el dropdown después de perder el foco
-    }, 200);  // Retraso para asegurar que el click en el ítem no cierre el dropdown
+    setTimeout(() => (this.showDropdown = false), 200); // Cierra el dropdown después de un tiempo
   }
-
-  removeSelection(item: Item) {
-    this.selectedItems = this.selectedItems.filter(i => i !== item);
+  
+  toggleSelection(item: { nombre: string }) {
+    const index = this.selectedItems.findIndex(selected => selected.nombre === item.nombre);
+    if (index === -1) {
+      this.selectedItems.push(item);
+    } else {
+      this.selectedItems.splice(index, 1);
+    }
   }
-}
+  
+  removeSelection(item: { nombre: string }) {
+    this.selectedItems = this.selectedItems.filter(selected => selected.nombre !== item.nombre);
+  }
+  
+  isSelected(item: { nombre: string }): boolean {
+    return this.selectedItems.some(selected => selected.nombre === item.nombre);
+  }
+}  

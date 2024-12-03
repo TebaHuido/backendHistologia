@@ -22,4 +22,7 @@ export class ApiService {
   getTejido(id: number): Observable<Muestra> {
     return this.http.get<Muestra>(`${this.apiUrl}/muestra3/${id}`);
   }
+  getFilters(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/filters`);
+  }
 }

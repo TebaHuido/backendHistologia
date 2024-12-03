@@ -3,27 +3,27 @@
   <div class="filters">
     <app-filter
       [label]="'Categorias'" 
-      [allItems]="filteredTejidosItems"
+      [allItems]="categorias"
       (filterChange)="filterMuestras($event)">
     </app-filter>
     <app-filter 
       [label]="'Sistemas'" 
-      [allItems]="sistemasUnicosFormateados"
+      [allItems]="sistemas"
       (filterChange)="filterMuestras($event)">
     </app-filter>
     <app-filter 
       [label]="'Organos'" 
-      [allItems]="filteredTejidosItems" 
+      [allItems]="organos" 
       (filterChange)="filterMuestras($event)">
     </app-filter>
     <app-filter 
       [label]="'Tinciones'" 
-      [allItems]="filteredTejidosItems" 
+      [allItems]="tinciones" 
       (filterChange)="filterMuestras($event)">
     </app-filter>
     <app-filter 
       [label]="'Tags'" 
-      [allItems]="filteredTagsItems" 
+      [allItems]="tags" 
       (filterChange)="filterMuestras($event)">
     </app-filter>
   </div>
