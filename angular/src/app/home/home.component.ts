@@ -15,7 +15,6 @@ interface Item {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-
 export class HomeComponent implements OnInit {
   listaTejidos_all: Tejido[] = [];
   listaTejidos_show: Tejido[] = [];
@@ -25,12 +24,19 @@ export class HomeComponent implements OnInit {
   filteredTejidosItems: { nombre: string }[] = [];
   sistemasUnicosFormateados: { nombre: string }[] = [];
 
-  // Propiedades para diferentes tipos de datos
   categorias: Item[] = [];
   organos: Item[] = [];
   sistemas: Item[] = [];
   tinciones: Item[] = [];
   tags: Item[] = [];
+
+  selectedFilters: { [key: string]: string[] } = {
+    category: [],
+    organ: [],
+    system: [],
+    tincion: [],
+    tag: []
+  };
 
   constructor(private api: ApiService) {}
 
@@ -39,9 +45,7 @@ export class HomeComponent implements OnInit {
       next: (tejidos: Tejido[]) => {
         this.listaTejidos_all = tejidos;
         this.listaTejidos_show = tejidos;
-
-        // Preparamos los datos
-        this.filteredTejidosItems = tejidos.map(te => ({ nombre: te.name })); 
+        this.filteredTejidosItems = tejidos.map(te => ({ nombre: te.name }));
         this.obtenerSistemasUnicos();
       },
       error: err => {
@@ -63,6 +67,34 @@ export class HomeComponent implements OnInit {
     return data.map((item: any) => ({ nombre: item.name || item }));
   }
 
+  filterMuestras(): void {
+    this.api.filterMuestras(this.selectedFilters).subscribe({
+      next: (tejidos: Tejido[]) => {
+        this.listaTejidos_show = tejidos;
+        this.obtenerSistemasUnicos();
+      },
+      error: err => {
+        console.error('Error al filtrar muestras:', err);
+      }
+    });
+  }
+
+  updateSelectedFilters(type: string, items: string[]): void {
+    this.selectedFilters[type] = items;
+    this.filterMuestras();
+  }
+
+  obtenerSistemasUnicos() {
+    const sistemasSet = new Set<string>();
+    this.listaTejidos_show.forEach(tejido => {
+      if (tejido.sistemas && tejido.sistemas.length > 0) {
+        tejido.sistemas.forEach(sistema => sistemasSet.add(sistema));
+      }
+    });
+    this.sistemasUnicos = Array.from(sistemasSet);
+    this.sistemasUnicosFormateados = this.sistemasUnicos.map(sistema => ({ nombre: sistema }));
+  }
+
   selectCategory(category: string) {
     console.log('Categoría seleccionada:', category);
     if (category === 'all') {
@@ -81,37 +113,15 @@ export class HomeComponent implements OnInit {
     this.obtenerSistemasUnicos();
   }
 
-  obtenerSistemasUnicos() {
-    const sistemasSet = new Set<string>();
-    this.listaTejidos_show.forEach(tejido => {
-      if (tejido.sistema) {
-        sistemasSet.add(tejido.sistema);
-      }
-    });
-    this.sistemasUnicos = Array.from(sistemasSet);
-    this.sistemasUnicosFormateados = this.sistemasUnicos.map(sistema => ({ nombre: sistema }));
-  }
-
   drawPoint(event: MouseEvent) {
     console.log(event.offsetX, event.offsetY);
   }
 
   getMuestrasPorSistema(sistema: string): Tejido[] {
-    return this.listaTejidos_show.filter(muestra => muestra.sistema === sistema);
+    return this.listaTejidos_show.filter(muestra => muestra.sistemas.includes(sistema));
   }
 
   getMuestrasSinSistema(): Tejido[] {
-    return this.listaTejidos_show.filter(muestra => !muestra.sistema);
-  }
-
-  filterMuestras(searchTerm: string) {
-    if (!searchTerm) {
-      this.listaTejidos_show = this.listaTejidos_all;
-    } else {
-      this.listaTejidos_show = this.listaTejidos_all.filter(tejido =>
-        tejido.name.toLowerCase().includes(searchTerm)
-      );
-    }
-    this.obtenerSistemasUnicos();
+    return this.listaTejidos_show.filter(muestra => !muestra.sistemas || muestra.sistemas.length === 0);
   }
 }

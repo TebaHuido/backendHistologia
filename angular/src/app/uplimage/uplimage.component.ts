@@ -47,25 +47,25 @@ export class UplimageComponent implements OnInit {
 
 
   loadTinciones() {
-    this.http.get('http://localhost:8000/tinciones/').subscribe((data: any) => {
+    this.http.get('http://localhost:8000/api/tinciones/').subscribe((data: any) => {
       this.tinciones = data;
     });
   }
   
   loadCategories() {
-    this.http.get('http://localhost:8000/categorias/').subscribe((data: any) => {
+    this.http.get('http://localhost:8000/api/categorias/').subscribe((data: any) => {
       this.categories = data;
     });
   }
 
   loadOrganos() {
-    this.http.get('http://localhost:8000/organos/').subscribe((data: any) => {
+    this.http.get('http://localhost:8000/api/organos/').subscribe((data: any) => {
       this.organos = data;
     });
   }
 
   loadSistemas() {
-    this.http.get('http://localhost:8000/sistemas/').subscribe((data: any) => {
+    this.http.get('http://localhost:8000/api/sistemas/').subscribe((data: any) => {
       this.sistemas = data;
     });
   }
@@ -154,7 +154,7 @@ export class UplimageComponent implements OnInit {
     });
   
     // Enviar solicitud al servidor
-    this.http.post('http://localhost:8000/muestras/', formData).subscribe({
+    this.http.post('http://localhost:8000/api/muestras/', formData).subscribe({
       next: (response) => {
         console.log('Muestra creada exitosamente:', response);
         this.resetForm();

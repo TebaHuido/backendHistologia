@@ -2,8 +2,9 @@
      (wheel)="onWheel($event)"
      (mousedown)="onMouseDown($event)"
      (mousemove)="onMouseMove($event)"
-     (mouseup)="onMouseUp()">
-  <img [src]="imageUrl"
+     (mouseup)="onMouseUp()"
+     (mouseleave)="onMouseUp()">
+  <img #imageElement [src]="imageUrl"
        [style.transform]="'translate(' + (-offsetX) + 'px,' + (-offsetY) + 'px) scale(' + scale + ')'"
        [style.transform-origin]="'0 0'"
        (click)="onImageClick($event)"
@@ -19,12 +20,9 @@
 
     <!-- Otros botones (en su propio contenedor) -->
     <div class="other-buttons">
-      <!-- Botón para activar/desactivar el modo etiquetado -->
       <button (click)="toggleTaggingMode()">
         {{ isTaggingMode ? 'Salir de etiquetado' : 'Activar etiquetado' }}
       </button>
-
-      <!-- Botón para mostrar/ocultar etiquetas -->
       <button (click)="toggleLabelsVisibility()">
         {{ showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas' }}
       </button>

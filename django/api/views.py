@@ -24,11 +24,10 @@ from .serializer import (
 # Vista genérica para recuperar el detalle de una muestra específica por ID
 class FilterView(APIView):
     def get(self, request, *args, **kwargs):
-
         categorias_serializadas = CategoriaSerializer(Categoria.objects.all(), many=True).data
         organos_serializados = OrganoSerializer(Organo.objects.all(), many=True).data
         sistemas_serializados = SistemaSerializer(Sistema.objects.all(), many=True).data
-        tinciones_serializadas = TincionSerializer(Tincion.objects.all(), many=True).data  # Cambiado a Tincion
+        tinciones_serializadas = TincionSerializer(Tincion.objects.all(), many=True).data
         tags_serializados = TagsSerializer(Tag.objects.all(), many=True).data
 
         return Response({
@@ -73,14 +72,27 @@ class MuestraViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     @action(detail=False, methods=['get'])
     
-    def por_categoria(self, request):
-        category = request.query_params.get('category', 'all')
-        # Lógica para filtrar por categoría
-        if category == 'all':
-            muestras = Muestra.objects.all()
-        else:
-            muestras = Muestra.objects.filter(categoria=category)
-        serializer = MuestraSerializer(muestras, many=True)
+    def Filtrado(self, request):
+        categories = request.query_params.getlist('category', [])
+        organs = request.query_params.getlist('organ', [])
+        systems = request.query_params.getlist('system', [])
+        tincions = request.query_params.getlist('tincion', [])
+        tags = request.query_params.getlist('tag', [])
+
+        muestras = Muestra.objects.all()
+
+        if categories:
+            muestras = muestras.filter(Categoria__name__in=categories)
+        if organs:
+            muestras = muestras.filter(organo__name__in=organs)
+        if systems:
+            muestras = muestras.filter(organo__sistema__name__in=systems)
+        if tincions:
+            muestras = muestras.filter(tincion__name__in=tincions)
+        if tags:
+            muestras = muestras.filter(notas__tags__name__in=tags)
+
+        serializer = MuestraSerializer(muestras.distinct(), many=True)
         return Response(serializer.data)
 # Función para listar capturas asociadas a una muestra específica
 def lista_capturas_muestra(request, muestra_id):
@@ -176,7 +188,7 @@ class NotasViewSet(viewsets.ModelViewSet):
     serializer_class = NotaSerializer
 
 class TincionViewSet(viewsets.ModelViewSet):
-    queryset = Notas.objects.all()
+    queryset = Tincion.objects.all()
     serializer_class = TincionSerializer
 
 class MuestraFilterAPIView(generics.ListAPIView):
@@ -184,9 +196,6 @@ class MuestraFilterAPIView(generics.ListAPIView):
     serializer_class = MuestraSerializer
 
     def get_queryset(self):
-        """
-        Filtra las muestras según los parámetros de la URL.
-        """
         queryset = super().get_queryset()
         categoria_id = self.request.query_params.get('categoria')
         sistema_id = self.request.query_params.get('sistema')
@@ -194,7 +203,6 @@ class MuestraFilterAPIView(generics.ListAPIView):
         tincion_id = self.request.query_params.get('tincion')
         tag_id = self.request.query_params.get('tag')
 
-        # Construcción dinámica de los filtros
         if categoria_id:
             queryset = queryset.filter(Categoria__id=categoria_id)
         if sistema_id:

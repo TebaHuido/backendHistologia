@@ -25,6 +25,9 @@ export interface Muestra {
     sistemas: string[];
 }
 export interface Tejido {
+    capturas: { id: number; name: string; image: string; }[];
+    notas: { id: number; nota: string; }[];
+    sistemas: string[];
     id: number;
     name: string;
     Categoria: number[];

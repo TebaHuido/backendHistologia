@@ -14,7 +14,7 @@ interface Item {
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent {
-  @Output() filterChange = new EventEmitter<string>();
+  @Output() filterChange = new EventEmitter<string[]>();
   filterId: string = 'filter';
   @Input() label: string = 'Elemento';
 
@@ -53,13 +53,15 @@ export class FilterComponent {
     } else {
       this.selectedItems.splice(index, 1);
     }
+    this.filterChange.emit(this.selectedItems.map(selected => selected.nombre));
   }
   
   removeSelection(item: { nombre: string }) {
     this.selectedItems = this.selectedItems.filter(selected => selected.nombre !== item.nombre);
+    this.filterChange.emit(this.selectedItems.map(selected => selected.nombre));
   }
   
   isSelected(item: { nombre: string }): boolean {
     return this.selectedItems.some(selected => selected.nombre === item.nombre);
   }
-}  
+}

@@ -1,28 +1,35 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Categorias, Tejido, Muestra } from '../services/tejidos.mock';
+import { Tejido } from './tejidos.mock';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:8000';
+  private baseUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
-  getCategorias(): Observable<Categorias[]> {
-    return this.http.get<Categorias[]>(`${this.apiUrl}/categorias`);
-  }
-
   getTejidos(category: string): Observable<Tejido[]> {
-    return this.http.get<Tejido[]>(`${this.apiUrl}/muestras/por_categoria/?category=${category}`);
+    return this.http.get<Tejido[]>(`${this.baseUrl}/tejidos`, { params: { category } });
   }
 
-  getTejido(id: number): Observable<Muestra> {
-    return this.http.get<Muestra>(`${this.apiUrl}/muestra3/${id}`);
+  getTejido(id: number): Observable<Tejido> {
+    return this.http.get<Tejido>(`${this.baseUrl}/tejidos/${id}`);
   }
+
   getFilters(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/filters`);
+    return this.http.get<any>(`${this.baseUrl}/filters`);
+  }
+
+  filterMuestras(filters: any): Observable<Tejido[]> {
+    let params = new HttpParams();
+    Object.keys(filters).forEach(key => {
+      filters[key].forEach((value: string) => {
+        params = params.append(key, value);
+      });
+    });
+    return this.http.get<Tejido[]>(`${this.baseUrl}/muestras/filtrado/`, { params });
   }
 }

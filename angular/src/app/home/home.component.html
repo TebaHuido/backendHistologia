@@ -4,27 +4,27 @@
     <app-filter
       [label]="'Categorias'" 
       [allItems]="categorias"
-      (filterChange)="filterMuestras($event)">
+      (filterChange)="updateSelectedFilters('category', $event)">
     </app-filter>
     <app-filter 
       [label]="'Sistemas'" 
       [allItems]="sistemas"
-      (filterChange)="filterMuestras($event)">
+      (filterChange)="updateSelectedFilters('system', $event)">
     </app-filter>
     <app-filter 
       [label]="'Organos'" 
       [allItems]="organos" 
-      (filterChange)="filterMuestras($event)">
+      (filterChange)="updateSelectedFilters('organ', $event)">
     </app-filter>
     <app-filter 
       [label]="'Tinciones'" 
       [allItems]="tinciones" 
-      (filterChange)="filterMuestras($event)">
+      (filterChange)="updateSelectedFilters('tincion', $event)">
     </app-filter>
     <app-filter 
       [label]="'Tags'" 
       [allItems]="tags" 
-      (filterChange)="filterMuestras($event)">
+      (filterChange)="updateSelectedFilters('tag', $event)">
     </app-filter>
   </div>
   <section class="base">
