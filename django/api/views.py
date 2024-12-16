@@ -4,7 +4,7 @@ import json
 from rest_framework.views import APIView
 # Importa módulos de DRF (Django Rest Framework) para crear API y vistas
 from rest_framework import viewsets, generics ,status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth import authenticate, login
