@@ -3,9 +3,11 @@ from django.contrib.auth.models import User
 from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'is_alumno', 'is_profesor']
+        fields = ['id', 'username', 'email', 'is_alumno', 'is_profesor', 'password']
 
 class ProfesorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -23,10 +25,13 @@ class ProfesorCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        user = CustomUser.objects.create_user(**user_data)
+        password = user_data.pop('password')
+        user = CustomUser(**user_data)
+        user.set_password(password)
         user.is_profesor = True
         user.save()
         profesor = Profesor.objects.create(user=user, **validated_data)
+        print(f"Created user: {user.username} with password: {password}")  # Mensaje de depuración
         return profesor
 
 class CursoSerializer(serializers.ModelSerializer):

@@ -3,6 +3,7 @@ import { ApiService } from '../services/api.service';
 import { Tejido, Categorias } from '../services/tejidos.mock';
 import { NgFor, CommonModule } from '@angular/common';
 import { FilterComponent } from '../filter/filter.component';
+import { AuthService } from '../services/auth.service';
 
 interface Item {
   nombre: string;
@@ -38,10 +39,16 @@ export class HomeComponent implements OnInit {
     tag: []
   };
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.api.getTejidos('all').subscribe({
+    this.loadData();
+  }
+
+  private loadData(): void {
+    const headers = this.authService.getAuthHeaders();
+
+    this.api.getTejidos('all', headers).subscribe({
       next: (tejidos: Tejido[]) => {
         this.listaTejidos_all = tejidos;
         this.listaTejidos_show = tejidos;
@@ -49,16 +56,47 @@ export class HomeComponent implements OnInit {
         this.obtenerSistemasUnicos();
       },
       error: err => {
-        console.error('Error al obtener todos los tejidos:', err);
+        if (err.status === 403 && err.error.code === 'token_not_valid') {
+          this.authService.refreshToken().subscribe({
+            next: (response: any) => {
+              this.authService.setToken(response.access);
+              this.loadData();
+            },
+            error: refreshErr => {
+              console.error('Error al refrescar el token:', refreshErr);
+              this.authService.logout();
+            }
+          });
+        } else {
+          console.error('Error al obtener todos los tejidos:', err);
+        }
       }
     });
 
-    this.api.getFilters().subscribe((data) => {
-      this.categorias = this.transformDataToItems(data.categorias);
-      this.organos = this.transformDataToItems(data.organos);
-      this.sistemas = this.transformDataToItems(data.sistemas);
-      this.tinciones = this.transformDataToItems(data.tinciones);
-      this.tags = this.transformDataToItems(data.tags);
+    this.api.getFilters(headers).subscribe({
+      next: (data) => {
+        this.categorias = this.transformDataToItems(data.categorias);
+        this.organos = this.transformDataToItems(data.organos);
+        this.sistemas = this.transformDataToItems(data.sistemas);
+        this.tinciones = this.transformDataToItems(data.tinciones);
+        this.tags = this.transformDataToItems(data.tags);
+      },
+      error: err => {
+        if (err.status === 403 && err.error.code === 'token_not_valid') {
+          this.authService.refreshToken().subscribe({
+            next: (response: any) => {
+              this.authService.setToken(response.access);
+              this.loadData();
+            },
+            error: refreshErr => {
+              console.error('Error al refrescar el token:', refreshErr);
+              this.authService.logout();
+            }
+          });
+        } else {
+          console.error('Error al obtener filtros:', err);
+        }
+      }
     });
   }
 
@@ -68,7 +106,8 @@ export class HomeComponent implements OnInit {
   }
 
   filterMuestras(): void {
-    this.api.filterMuestras(this.selectedFilters).subscribe({
+    const headers = this.authService.getAuthHeaders();
+    this.api.filterMuestras(this.selectedFilters, headers).subscribe({
       next: (tejidos: Tejido[]) => {
         this.listaTejidos_show = tejidos;
         this.obtenerSistemasUnicos();
@@ -97,10 +136,11 @@ export class HomeComponent implements OnInit {
 
   selectCategory(category: string) {
     console.log('Categoría seleccionada:', category);
+    const headers = this.authService.getAuthHeaders();
     if (category === 'all') {
       this.listaTejidos_show = this.listaTejidos_all;
     } else {
-      this.api.getTejidos(category).subscribe({
+      this.api.getTejidos(category, headers).subscribe({
         next: (tejidos: Tejido[]) => {
           this.listaTejidos_show = tejidos;
           this.obtenerSistemasUnicos();

@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middleware.AuthenticationMiddleware',  # Asegúrate de agregar este middleware
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -59,6 +60,51 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://localhost:80",
+    "http://localhost:4200",
+    "http://localhost:8000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+# Configuración de autenticación
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Configuración de REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+# Configuración de JWT
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': '7392b191476217f92eec5ea905324ec1b5bec224a69b96a3a86a71794bc356923c2fd29500c88b9b6a27d842506155ba7455349406c91d460455cc0761e3a3ae565b0bf40987f65d6c226ada730758609c97dc41b40bffdc8dd7da5e9216b2c27f72853f058e005c63397fabc26049c40939734d9c16f06ddeec93a639ea3c6c5ff862a4ca0ed66228ddaa118e04d7940c6bc1e8bc2d4f1e00e93b4dcb1991e680e73eec9e5abeaea0a788120c9df725b89790cec81a7f0499d8c297f58fdb83b90df2192dd5f420395e556b671c5c5b6763ab77303114aa0fdb05729d88e4c3cdce4745631ddcbd2fe94613a6c5163bb3f6193780368badc7fce65cffafc18b',  # Asegúrate de definir tu clave secreta para JWT
+    'VERIFYING_KEY': '',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
 ROOT_URLCONF = 'drf.urls'
 
 TEMPLATES = [
@@ -139,3 +185,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../../../share/nginx/html/images')
 
 # Define la URL pública para acceder a los archivos (en Nginx)
 MEDIA_URL = '/images/'
+
+AUTH_USER_MODEL = 'api.CustomUser'

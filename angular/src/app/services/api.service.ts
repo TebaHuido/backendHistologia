@@ -1,39 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Tejido } from './tejidos.mock';
+import { Tejido, Muestra } from './tejidos.mock';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8000/api';
+  private baseUrl = 'http://localhost:8000/api'; // Cambia esto a tu URL de backend
 
   constructor(private http: HttpClient) {}
 
-  getTejidos(category: string): Observable<Tejido[]> {
-    return this.http.get<Tejido[]>(`${this.baseUrl}/tejidos`, { params: { category } });
+  getTejidos(category: string, headers: HttpHeaders): Observable<Tejido[]> {
+    return this.http.get<Tejido[]>(`${this.baseUrl}/tejidos/?category=${category}`, { headers });
   }
 
-  getTejido(id: number): Observable<Tejido> {
-    return this.http.get<Tejido>(`${this.baseUrl}/tejidos/${id}`);
+  getFilters(headers: HttpHeaders): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/filters/`, { headers });
   }
 
-  getFilters(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/filters`);
+  filterMuestras(filters: any, headers: HttpHeaders): Observable<Tejido[]> {
+    return this.http.post<Tejido[]>(`${this.baseUrl}/filter-muestras/`, filters, { headers });
   }
 
-  filterMuestras(filters: any): Observable<Tejido[]> {
-    let params = new HttpParams();
-    Object.keys(filters).forEach(key => {
-      filters[key].forEach((value: string) => {
-        params = params.append(key, value);
-      });
-    });
-    return this.http.get<Tejido[]>(`${this.baseUrl}/muestras/filtrado/`, { params });
+  getTejido(id: number, headers: HttpHeaders): Observable<Tejido> {
+    return this.http.get<Tejido>(`${this.baseUrl}/tejidos/${id}/`, { headers });
   }
 
-  addNota(nota: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/notas/`, nota);
+  addNota(nota: any, headers: HttpHeaders): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/notas/`, nota, { headers });
+  }
+
+  updateSample(id: number, sample: any, headers: HttpHeaders): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/samples/${id}/`, sample, { headers });
   }
 }

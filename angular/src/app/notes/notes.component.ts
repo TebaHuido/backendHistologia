@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
+
 interface SampleNote {
   id: number;
   name: string;
@@ -13,12 +16,11 @@ interface SampleNote {
 @Component({
   selector: 'app-notes',
   standalone: true,
-  imports: [RouterModule,CommonModule,FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule],
   templateUrl: './notes.component.html',
   styleUrls: ['./notes.component.css']
 })
 export class NotesComponent {
-  // Array de notas de ejemplo
   sampleNotes: SampleNote[] = [
     {
       id: 1,
@@ -43,10 +45,21 @@ export class NotesComponent {
     }
   ];
 
-  // Método simulado para guardar cambios (puede adaptarse para guardar cada muestra de forma individual)
+  constructor(private authService: AuthService, private apiService: ApiService) {}
+
   onSave(sample: SampleNote): void {
     console.log(`Guardando cambios para ${sample.name}`);
     console.log('Notas:', sample.notes);
     console.log('Coordenadas:', sample.coordinates);
+
+    const headers = this.authService.getAuthHeaders();
+    this.apiService.updateSample(sample.id, sample, headers).subscribe({
+      next: (response: any) => {
+        console.log('Cambios guardados exitosamente:', response);
+      },
+      error: (err: any) => {
+        console.error('Error al guardar los cambios:', err);
+      }
+    });
   }
 }

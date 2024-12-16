@@ -13,17 +13,20 @@ trap cleanup SIGINT SIGTERM
 
 # Iniciar el servidor de Django
 cd /usr/src/app/django
-python manage.py runserver 0.0.0.0:8000 &
+/usr/src/app/venv/bin/python manage.py runserver 0.0.0.0:8000 &
 DJANGO_PID=$!
 
 # Iniciar el servidor Angular con redirección de logs
 cd /usr/src/app/angular
-npx ng serve --host 0.0.0.0 --port 4200 | sed -u 's/Local:.*4200/Local:   http:\/\/localhost:80/' &
+ng serve --host 0.0.0.0 --port 4200 &
 ANGULAR_PID=$!
 
 # Iniciar Nginx en modo no daemon
 nginx -g "daemon off;" &
 NGINX_PID=$!
+
+# Manejar el cierre de los procesos de Django y Angular
+trap 'kill %1; kill %2' SIGINT SIGTERM
 
 # Esperar por los procesos hijo
 wait "$DJANGO_PID"

@@ -20,6 +20,7 @@ RUN /usr/src/app/venv/bin/pip install --upgrade pip && \
 
 # Configurar el entorno virtual como predeterminado
 ENV PATH="/usr/src/app/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
 
 # Establecer el directorio de trabajo para Angular
 WORKDIR /usr/src/app/angular
@@ -45,6 +46,7 @@ EXPOSE 4200
 # Copiar la configuración de Nginx para servir Angular y hacer proxy hacia Django
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+
 # Crear un script para ejecutar ambos servicios (Django y Angular) en segundo plano y luego iniciar Nginx
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh

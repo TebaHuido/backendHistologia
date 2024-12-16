@@ -23,8 +23,19 @@ from .serializer import (
     TincionSerializer, TagsSerializer, UserSerializer, ProfesorCreateSerializer
 )
 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import IsProfesor
+
+import logging
+import sys
+import jwt
+from django.conf import settings
+from rest_framework_simplejwt.tokens import RefreshToken
+
+logger = logging.getLogger(__name__)
+
+# Redirige los mensajes print a stdout
+sys.stdout = sys.stderr
 
 # Vista genérica para recuperar el detalle de una muestra específica por ID
 class FilterView(APIView):
@@ -239,15 +250,29 @@ class TagViewSet(viewsets.ModelViewSet):
     serializer_class = TagsSerializer
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]  # Allow unauthenticated users to access this view
+
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        if not username or not password:
+            return Response({'error': 'Username and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            user_data = UserSerializer(user).data
-            return Response({'message': 'Login successful', 'user': user_data}, status=status.HTTP_200_OK)
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+            if user.is_active:
+                login(request, user)
+                refresh = RefreshToken.for_user(user)
+                user_data = UserSerializer(user).data
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'user': user_data
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'User account is disabled'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfesorCreateView(generics.CreateAPIView):
     queryset = Profesor.objects.all()

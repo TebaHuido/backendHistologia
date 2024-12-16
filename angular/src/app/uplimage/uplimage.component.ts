@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: true,
@@ -22,7 +23,7 @@ export class UplimageComponent implements OnInit {
   isCreatingNewTincion = false;
   selectedFiles: File[] = [];
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {
     this.sampleForm = this.fb.group({
       name: ['', Validators.required],
       category: ['', Validators.required],
@@ -45,25 +46,29 @@ export class UplimageComponent implements OnInit {
   }
 
   loadTinciones() {
-    this.http.get('http://localhost:8000/api/tinciones/').subscribe((data: any) => {
+    const headers = this.authService.getAuthHeaders();
+    this.http.get('http://localhost:8000/api/tinciones/', { headers }).subscribe((data: any) => {
       this.tinciones = data;
     });
   }
   
   loadCategories() {
-    this.http.get('http://localhost:8000/api/categorias/').subscribe((data: any) => {
+    const headers = this.authService.getAuthHeaders();
+    this.http.get('http://localhost:8000/api/categorias/', { headers }).subscribe((data: any) => {
       this.categories = data;
     });
   }
 
   loadOrganos() {
-    this.http.get('http://localhost:8000/api/organos/').subscribe((data: any) => {
+    const headers = this.authService.getAuthHeaders();
+    this.http.get('http://localhost:8000/api/organos/', { headers }).subscribe((data: any) => {
       this.organos = data;
     });
   }
 
   loadSistemas() {
-    this.http.get('http://localhost:8000/api/sistemas/').subscribe((data: any) => {
+    const headers = this.authService.getAuthHeaders();
+    this.http.get('http://localhost:8000/api/sistemas/', { headers }).subscribe((data: any) => {
       this.sistemas = data;
     });
   }
@@ -163,7 +168,8 @@ export class UplimageComponent implements OnInit {
     });
   
     // Enviar solicitud al servidor
-    this.http.post('http://localhost:8000/api/muestras/', formData).subscribe({
+    const headers = this.authService.getAuthHeaders();
+    this.http.post('http://localhost:8000/api/muestras/', formData, { headers, withCredentials: true }).subscribe({
       next: (response) => {
         console.log('Muestra creada exitosamente:', response);
         this.resetForm();
@@ -174,8 +180,6 @@ export class UplimageComponent implements OnInit {
     });
   }
   
-  
-
   resetForm() {
     this.sampleForm.reset();
     this.selectedFiles = [];

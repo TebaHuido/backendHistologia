@@ -4,10 +4,7 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User, AbstractUser
-
-
-
-
+from django.conf import settings  # Import settings
 
 def generate_filename(instance, filename):
     extension = filename.split('.')[-1]
@@ -40,7 +37,7 @@ class Profesor(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
     # Elimina los campos passhash y correo
     # passhash = models.CharField(max_length=100, verbose_name="Hash")
-    # correo = models.CharField(maxlength=100, verbose_name="Correo")
+    # correo = models.CharField(max_length=100, verbose_name="Correo")
 
     def __str__(self):
         return f"Profesor: {self.name} ({self.user.email})"
@@ -140,7 +137,7 @@ class Alumno(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre")
     # Elimina los campos passhash y correo
     # passhash = models.CharField(max_length=100, verbose_name="Hash")
-    # correo = models.CharField(maxlength=100, verbose_name="Correo")
+    # correo = models.CharField(max_length=100, verbose_name="Correo")
     curso = models.ManyToManyField(Curso, blank=True)
     permiso = models.ManyToManyField(Muestra, blank=True)
 
@@ -157,9 +154,10 @@ def delete_image(sender, instance, **kwargs):
                 print(f"Imagen {image_path} eliminada con éxito.")
             except Exception as e:
                 print(f"Error al eliminar la imagen {image_path}: {e}")
+
 class Notas(models.Model):
     nota = models.CharField(max_length=1500, verbose_name="Nota")
-    alumno = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)  # Update relation
     ayudante = models.ForeignKey(Ayudante, on_delete=models.SET_NULL, null=True, blank=True)
     profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True)
     public = models.BooleanField(default=False)

@@ -34,7 +34,8 @@ export class TejidoComponent implements OnInit {
   }
 
   getTejido(id: number): void {
-    this.api.getTejido(id).subscribe({
+    const headers = this.auth.getAuthHeaders();
+    this.api.getTejido(id, headers).subscribe({
       next: (tejido: Tejido) => {
         const muestra: Muestra = {
           id: tejido.id,
@@ -52,7 +53,22 @@ export class TejidoComponent implements OnInit {
         }
       },
       error: (err: any) => {
-        console.error('Error al obtener el tejido:', err);
+        if (err.status === 403 && err.error.code === 'token_not_valid') {
+          this.auth.refreshToken().subscribe({
+            next: (response: any) => {
+              this.auth.setToken(response.access);
+              this.getTejido(id);
+            },
+            error: refreshErr => {
+              console.error('Error al refrescar el token:', refreshErr);
+              this.auth.logout();
+            }
+          });
+        } else if (err.status === 404) {
+          console.error('Tejido no encontrado:', err);
+        } else {
+          console.error('Error al obtener el tejido:', err);
+        }
       }
     });
   }
@@ -82,13 +98,14 @@ export class TejidoComponent implements OnInit {
       muestra: this.tejidosArray[0].id
     };
 
-    this.api.addNota(nota).subscribe({
-      next: (response) => {
+    const headers = this.auth.getAuthHeaders();
+    this.api.addNota(nota, headers).subscribe({
+      next: (response: any) => {
         console.log('Nota agregada exitosamente:', response);
         this.tejidosArray[0].notas.push(response);
         this.newNota = '';
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al agregar la nota:', err);
       }
     });

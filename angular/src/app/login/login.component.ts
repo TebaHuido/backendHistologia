@@ -27,11 +27,13 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
       this.authService.login(username, password).subscribe(
-        (response) => {
-          this.authService.setUser(response);
-          this.router.navigate(['/']);
+        (response: any) => {
+          this.authService.setToken(response.access); // Almacena el token de acceso
+          this.authService.setRefreshToken(response.refresh); // Almacena el token de refresco
+          this.authService.setUser(response.user);
+          this.router.navigate(['/']); // Redirige al home
         },
-        (error) => {
+        (error: any) => {
           console.error('Login failed', error);
         }
       );
