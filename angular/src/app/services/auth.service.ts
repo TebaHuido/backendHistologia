@@ -69,7 +69,15 @@ export class AuthService {
   }
 
   getCSRFToken(): string | null {
-    return this.getCookie('csrftoken');
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return null;
   }
 
   private getCookie(name: string): string | null {

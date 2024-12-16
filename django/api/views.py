@@ -31,6 +31,8 @@ import sys
 import jwt
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
@@ -194,9 +196,16 @@ class CapturaViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CapturaSerializer
 
 # Vista para manejar notas (CRUD completo)
-class NotasViewSet(viewsets.ModelViewSet):
+from rest_framework import viewsets
+from .models import Notas
+from .serializer import NotaSerializer
+
+class NotaViewSet(viewsets.ModelViewSet):
     queryset = Notas.objects.all()
     serializer_class = NotaSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(alumno=self.request.user)
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -264,11 +273,14 @@ class LoginView(APIView):
                 login(request, user)
                 refresh = RefreshToken.for_user(user)
                 user_data = UserSerializer(user).data
-                return Response({
+                csrf_token = get_token(request)
+                response = JsonResponse({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                     'user': user_data
-                }, status=status.HTTP_200_OK)
+                })
+                response.set_cookie('csrftoken', csrf_token, httponly=True)  # Ensure CSRF token is set in cookies
+                return response
             else:
                 return Response({'error': 'User account is disabled'}, status=status.HTTP_403_FORBIDDEN)
         else:

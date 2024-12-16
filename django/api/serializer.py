@@ -196,9 +196,11 @@ class AlumnoSerializer(serializers.ModelSerializer):
         fields = ['user', 'name', 'curso', 'permiso']
 
 class NotaSerializer(serializers.ModelSerializer):
+    alumno = serializers.PrimaryKeyRelatedField(queryset=Alumno.objects.all())
+
     class Meta:
         model = Notas
-        fields = ('id', 'nota',)  # Ajusta según tus necesidades
+        fields = ('id', 'nota', 'alumno')  # Ajusta según tus necesidades
 
 class MuestraSerializer2(serializers.ModelSerializer):
     capturas = serializers.SerializerMethodField()

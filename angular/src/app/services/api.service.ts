@@ -27,8 +27,8 @@ export class ApiService {
     return this.http.get<Tejido>(`${this.baseUrl}/tejidos/${id}/`, { headers });
   }
 
-  addNota(nota: any, headers: HttpHeaders): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/notas/`, nota, { headers });
+  addNota(nota: any, headers: HttpHeaders, options: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/notas/`, nota, { headers, ...options });
   }
 
   updateSample(id: number, sample: any, headers: HttpHeaders): Observable<any> {

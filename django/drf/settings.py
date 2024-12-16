@@ -187,3 +187,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../../../share/nginx/html/images')
 MEDIA_URL = '/images/'
 
 AUTH_USER_MODEL = 'api.CustomUser'
+
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False  # Ensure this is set to False for local development

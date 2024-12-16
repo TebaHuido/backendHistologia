@@ -10,7 +10,12 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
     # ...existing settings...
 }
@@ -45,3 +50,35 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:4200",
+]
+
+# middleware.py
+class AuthenticationMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if request.path == '/api/login/':
+            return
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if (auth_header.startswith('Bearer ')):
+            token = auth_header.split(' ')[1]
+            if token:
+                try:
+                    payload = jwt.decode(token, settings.SIMPLE_JWT['SIGNING_KEY'], algorithms=['HS256'])
+                    user = get_user_model().objects.get(id=payload['user_id'])
+                    request.user = user
+                    print(f"User {user.username} is authenticated")
+                except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, get_user_model().DoesNotExist):
+                    print("Invalid token")
+                    request.user = None
+            else:
+                print("No token provided")
+                request.user = None
+        else:
+            print("Invalid authorization header")
+            request.user = None

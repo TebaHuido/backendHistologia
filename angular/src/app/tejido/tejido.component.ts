@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
 import { ApiService } from '../services/api.service';
 import { Muestra, Tejido } from '../services/tejidos.mock';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +23,7 @@ export class TejidoComponent implements OnInit {
   isSidebarCollapsed = false;
   newNota: string = '';
 
-  constructor(private route: ActivatedRoute, private api: ApiService, private auth: AuthService) { }
+  constructor(private route: ActivatedRoute, private api: ApiService, public auth: AuthService) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -98,8 +99,16 @@ export class TejidoComponent implements OnInit {
       muestra: this.tejidosArray[0].id
     };
 
-    const headers = this.auth.getAuthHeaders();
-    this.api.addNota(nota, headers).subscribe({
+    let headers = this.getAuthHeaders();
+    const csrfToken = this.getCSRFToken();
+    if (csrfToken) {
+      headers = headers.set('X-CSRFToken', csrfToken); // Ensure CSRF token is set correctly
+    } else {
+      console.error('CSRF token not found.');
+      return;
+    }
+
+    this.api.addNota(nota, headers, { withCredentials: true }).subscribe({
       next: (response: any) => {
         console.log('Nota agregada exitosamente:', response);
         this.tejidosArray[0].notas.push(response);
@@ -107,7 +116,28 @@ export class TejidoComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error al agregar la nota:', err);
+        if (err.status === 403) {
+          console.error('Error 403: Forbidden. Verifica los permisos y la autenticación.');
+        }
       }
     });
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = this.auth.getToken();
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
+
+  getCSRFToken(): string | null {
+    const csrfCookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+    if (!csrfCookie) {
+      console.error('CSRF cookie not set.');
+      return null;
+    }
+    return csrfCookie.split('=')[1];
   }
 }
