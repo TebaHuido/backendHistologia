@@ -1,9 +1,33 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import *
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'is_alumno', 'is_profesor']
+
 class ProfesorSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Profesor
         fields = '__all__'
+
+class ProfesorCreateSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Profesor
+        fields = ['user', 'name']
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = CustomUser.objects.create_user(**user_data)
+        user.is_profesor = True
+        user.save()
+        profesor = Profesor.objects.create(user=user, **validated_data)
+        return profesor
 
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -108,7 +132,7 @@ class MuestraSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         categoria_instances = validated_data.pop('categoria')
         organo_instances = validated_data.pop('organo')
-        sistema_instances = validated_data.pop('sistema')
+        sistema_instances = validated_data.pop('sistema', [])
         tincion_instances = validated_data.pop('tincion')
         images = validated_data.pop('images')
 
@@ -119,10 +143,16 @@ class MuestraSerializer(serializers.ModelSerializer):
         muestra.Categoria.set(categoria_instances)
         muestra.organo.set(organo_instances)
         muestra.tincion.set(tincion_instances)
-        
-        for organo in organo_instances:
-            organo.sistema.set(sistema_instances)
-        
+
+        # Solo asociamos sistemas si se han proporcionado
+        if sistema_instances and sistema_instances != 'null':
+            for organo in organo_instances:
+                if isinstance(organo, Organo):
+                    organo.sistema.set(sistema_instances)
+                else:
+                    organo_obj = Organo.objects.get(name=organo.name)
+                    organo_obj.sistema.set(sistema_instances)
+
         # Asociamos las imágenes a las capturas
         for image in images:
             Captura.objects.create(image=image, muestra=muestra)
@@ -138,6 +168,14 @@ class MuestraSerializer(serializers.ModelSerializer):
             return captura.image.url
         return None
 
+    def get_sistemas(self, obj):
+        organos = obj.organo.all()
+        sistemas = []
+        for organo in organos:
+            for sistema in organo.sistema.all():
+                sistemas.append({'sistema': sistema.name, 'organo': organo.name})
+        return sistemas if sistemas else []
+
 
 
 class LoteSerializer(serializers.ModelSerializer):
@@ -146,11 +184,11 @@ class LoteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AlumnoSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Alumno
-        fields = '__all__'
-
-
+        fields = ['user', 'name', 'curso', 'permiso']
 
 class NotaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -175,8 +213,12 @@ class MuestraSerializer2(serializers.ModelSerializer):
         return NotaSerializer(notas, many=True).data
 
     def get_sistemas(self, obj):
-        sistemas = obj.organo.all().values_list('sistema__name', flat=True)
-        return list(sistemas) if sistemas else []
+        organos = obj.organo.all()
+        sistemas = []
+        for organo in organos:
+            for sistema in organo.sistema.all():
+                sistemas.append({'sistema': sistema.name, 'organo': organo.name})
+        return sistemas if sistemas else []
 
 class TincionSerializer(serializers.ModelSerializer):
     class Meta:

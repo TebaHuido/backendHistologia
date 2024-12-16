@@ -2,11 +2,10 @@
     <h2>Iniciar Sesión</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="email">Correo Electrónico:</label>
-        <input id="email" formControlName="email" type="email" placeholder="tu@correo.com" />
-        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          <small *ngIf="loginForm.get('email')?.errors?.['required']">El correo electrónico es requerido.</small>
-          <small *ngIf="loginForm.get('email')?.errors?.['email']">Ingrese un correo electrónico válido.</small>
+        <label for="username">Nombre de Usuario:</label>
+        <input id="username" formControlName="username" type="text" placeholder="tu_usuario" />
+        <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          <small *ngIf="loginForm.get('username')?.errors?.['required']">El nombre de usuario es requerido.</small>
         </div>
       </div>
   
@@ -22,4 +21,3 @@
       <button type="submit" [disabled]="loginForm.invalid">Iniciar Sesión</button>
     </form>
   </div>
-  

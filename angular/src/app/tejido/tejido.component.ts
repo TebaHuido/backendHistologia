@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { ApiService } from '../services/api.service';
 import { Muestra, Tejido } from '../services/tejidos.mock';
 import { ActivatedRoute } from '@angular/router';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
 import { ImagenZoomComponent } from '../imagen-zoom/imagen-zoom.component';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-tejido',
   standalone: true,
-  imports: [NgFor, NgxImageZoomModule, ImagenZoomComponent],
+  imports: [NgFor, FormsModule, NgxImageZoomModule, ImagenZoomComponent], // Add FormsModule to imports
   templateUrl: './tejido.component.html',
   styleUrls: ['./tejido.component.css']
 })
@@ -17,8 +19,10 @@ export class TejidoComponent implements OnInit {
   tejidosArray: Muestra[] = [];
   imagenSeleccionada: { image: string } | undefined;
   initialLabels: { x: number; y: number }[] = [];
+  isSidebarCollapsed = false;
+  newNota: string = '';
 
-  constructor(private route: ActivatedRoute, private api: ApiService) { }
+  constructor(private route: ActivatedRoute, private api: ApiService, private auth: AuthService) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -37,7 +41,7 @@ export class TejidoComponent implements OnInit {
           name: tejido.name,
           capturas: tejido.capturas,
           notas: tejido.notas,
-          sistemas: tejido.sistemas
+          sistemas: tejido.sistemas.map((s: any) => `${s.sistema} - ${s.organo}`)
         };
         this.tejidosArray.push(muestra);
         if (muestra.capturas && muestra.capturas.length > 0) {
@@ -57,7 +61,36 @@ export class TejidoComponent implements OnInit {
     this.imagenSeleccionada = { image: captura.image };
   }
 
-  selectCategory(arg0: string) {
-    // Implementa la lógica para seleccionar categorías (notas, sistemas, etc.)
+  selectCategory(category: string) {
+    console.log('Categoría seleccionada:', category);
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  addNota(): void {
+    const user = this.auth.getUser();
+    if (!user) {
+      console.error('No se encontró el usuario.');
+      return;
+    }
+
+    const nota = {
+      nota: this.newNota,
+      alumno: user.id,
+      muestra: this.tejidosArray[0].id
+    };
+
+    this.api.addNota(nota).subscribe({
+      next: (response) => {
+        console.log('Nota agregada exitosamente:', response);
+        this.tejidosArray[0].notas.push(response);
+        this.newNota = '';
+      },
+      error: (err) => {
+        console.error('Error al agregar la nota:', err);
+      }
+    });
   }
 }

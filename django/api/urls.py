@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from api import views
+from .views import LoginView
 
 router = DefaultRouter()
 router.register(r'notas', views.NotasViewSet, basename='notas')
@@ -21,5 +22,8 @@ urlpatterns = [
     path('tejidos/', views.MuestraFilterAPIView.as_view(), name='tejidos'),
     path('tejidos/<int:id>/', views.MuestraDetailAPIView.as_view(), name='tejido-detail'),
     path('muestras/filtrado/', views.MuestraViewSet.as_view({'get': 'Filtrado'}), name='muestras_filtrado'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('profesores/create/', views.ProfesorCreateView.as_view(), name='profesor-create'),
+    path('uplimage/', views.UplimageView.as_view(), name='uplimage'),
     path('', include(router.urls)),
 ]

@@ -32,4 +32,8 @@ export class ApiService {
     });
     return this.http.get<Tejido[]>(`${this.baseUrl}/muestras/filtrado/`, { params });
   }
+
+  addNota(nota: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/notas/`, nota);
+  }
 }

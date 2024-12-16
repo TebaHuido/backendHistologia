@@ -1,10 +1,11 @@
 header {
     background-color: #24407e;
     color: #fff;
-    padding: 10px;
+    padding: 5px 10px; /* Reduce el padding para hacer el header más delgado */
     display: flex;
     justify-content: space-between; /* Asegura que haya espacio entre los elementos */
     align-items: center; /* Alinea verticalmente los elementos */
+    max-height: 60px; /* Ajusta la altura máxima del header */
 }
 
 .nombre {
@@ -15,34 +16,36 @@ header {
 
 .titulo {
     margin-left: 10px;
+    font-size: 20px; /* Reduce el tamaño de la fuente */
 }
 
 .menu {
     display: flex;
     align-items: center; /* Alinea verticalmente los elementos del menú */
-    gap: 1rem; /* Espaciado entre los elementos del menú */
+    gap: 0.5rem; /* Reduce el espaciado entre los elementos del menú */
 }
 
 .menu img {
-    width: 50px;
-    height: 50px;
+    width: 40px; /* Reduce el tamaño de la imagen */
+    height: 40px; /* Reduce el tamaño de la imagen */
     border-radius: 50%;
 }
 
 button {
     cursor: pointer;
-    height: 40px;
-    width: 60px;
-    border-radius: 10%;
+    height: 30px; /* Reduce la altura del botón */
+    width: auto; /* Ajusta el ancho del botón automáticamente */
+    padding: 0 10px; /* Ajusta el padding del botón */
+    border-radius: 5px; /* Reduce el radio de borde */
     background-color: #333;
     color: #fff;
     border: none;
-    font-size: 16px;
+    font-size: 14px; /* Reduce el tamaño de la fuente */
 }
 
 h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px; /* Reduce el tamaño de la fuente */
     font-weight: bold;
 }
 

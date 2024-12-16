@@ -29,7 +29,7 @@ export class UplimageComponent implements OnInit {
       newCategory: [''],
       organo: ['', Validators.required],
       newOrgano: [''],
-      sistema: ['', Validators.required],
+      sistema: [''],
       newSistema: [''],
       tincion: ['', Validators.required],
       newTincion: [''],
@@ -43,8 +43,6 @@ export class UplimageComponent implements OnInit {
     this.loadSistemas();
     this.loadTinciones();
   }
-
-
 
   loadTinciones() {
     this.http.get('http://localhost:8000/api/tinciones/').subscribe((data: any) => {
@@ -83,6 +81,15 @@ export class UplimageComponent implements OnInit {
   onOrganoChange(event: any) {
     const value = event.target.value;
     this.isCreatingNewOrgano = value === 'new';
+
+    if (!this.isCreatingNewOrgano) {
+      const selectedOrgano = this.organos.find(organo => organo.id === value);
+      if (selectedOrgano && selectedOrgano.sistema) {
+        this.sampleForm.patchValue({ sistema: selectedOrgano.sistema.id });
+      } else {
+        this.sampleForm.patchValue({ sistema: null });
+      }
+    }
   }
 
   onSistemaChange(event: any) {
@@ -137,6 +144,8 @@ export class UplimageComponent implements OnInit {
       formData.append('sistema', newSistema);
     } else if (selectedSistema) {
       formData.append('sistema', selectedSistema);
+    } else {
+      formData.append('sistema', 'null');
     }
     
     // Tinciones

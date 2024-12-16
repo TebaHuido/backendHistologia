@@ -9,15 +9,18 @@ import { TissueviewerComponent } from './tissueviewer/tissueviewer.component';
 import { ImageProcessorComponent } from './image-processor/image-processor.component';
 import { TestingviewComponent } from './testingview/testingview.component';
 import { FilterComponent } from './filter/filter.component';
+import { AuthGuard } from './services/auth.guard'; // Asegúrate de importar el AuthGuard
+
 export const routes: Routes = [
-    { path: '', component: HomeComponent, title: 'Muestras Histológicas UTA' },
-    { path: 'settings', component: SettingsComponent },
-    { path: 'notes', component: NotesComponent },
-    { path: 'uploadimg', component: UplimageComponent },
-    { path: 'tejido', component: TejidoComponent },
-    { path: 'tejido/:id', component: TejidoComponent },
+    { path: '', component: HomeComponent, title: 'Muestras Histológicas UTA', canActivate: [AuthGuard] },
+    { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+    { path: 'notes', component: NotesComponent, canActivate: [AuthGuard] },
+    { path: 'uploadimg', component: UplimageComponent, canActivate: [AuthGuard] },
+    { path: 'tejido', component: TejidoComponent, canActivate: [AuthGuard] },
+    { path: 'tejido/:id', component: TejidoComponent, canActivate: [AuthGuard] },
     { path: 'sesion', component: LoginComponent },
-    { path: 'tissueviewer', component: TissueviewerComponent },
-    { path: 'playground', component: ImageProcessorComponent},
-    { path : 'test', component: FilterComponent}
+    { path: 'tissueviewer', component: TissueviewerComponent, canActivate: [AuthGuard] },
+    { path: 'playground', component: ImageProcessorComponent, canActivate: [AuthGuard] },
+    { path: 'test', component: FilterComponent, canActivate: [AuthGuard] },
+    { path: 'login', component: LoginComponent }
 ];

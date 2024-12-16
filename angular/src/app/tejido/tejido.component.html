@@ -1,24 +1,37 @@
 <div class="cuerpo">
-  <section class="container">
-    <p class="category">Seleccione una imagen:</p>
-    <div class="list-group">
-      <button role="button" class="list-group-category" *ngFor="let captura of tejidosArray[0]?.capturas" (click)="seleccionarImagen(captura)">
-        {{ captura.name }}<br>
-      </button>
-    </div>
+  <section class="sidebar">
+    <button class="toggle-button" (click)="toggleSidebar()">☰</button>
+    <div class="sidebar-content" [class.collapsed]="isSidebarCollapsed">
+      <div class="section">
+        <h3>Imágenes</h3>
+        <div class="list-group">
+          <div class="list-group-item" *ngFor="let captura of tejidosArray[0]?.capturas" (click)="seleccionarImagen(captura)">
+            {{ captura.name }}
+          </div>
+        </div>
+      </div>
 
-    <p class="category">Seleccione una nota:</p>
-    <div class="list-group">
-      <a class="list-group-category" *ngFor="let nota of tejidosArray[0]?.notas" (click)="selectCategory(nota.nota)">
-        {{ nota.nota }}<br>
-      </a>
-    </div>
+      <div class="section">
+        <h3>Notas</h3>
+        <div class="list-group">
+          <div class="list-group-item" *ngFor="let nota of tejidosArray[0]?.notas" (click)="selectCategory(nota.nota)">
+            {{ nota.nota }}
+          </div>
+        </div>
+        <form (ngSubmit)="addNota()">
+          <textarea [(ngModel)]="newNota" name="newNota" placeholder="Escribe una nueva nota"></textarea>
+          <button type="submit">Agregar Nota</button>
+        </form>
+      </div>
 
-    <p class="category">Sistemas:</p>
-    <div class="list-group">
-      <button role="button" class="list-group-category" *ngFor="let sistema of tejidosArray[0]?.sistemas" (click)="selectCategory(sistema)">
-        {{ sistema }}<br>
-      </button>
+      <div class="section">
+        <h3>Sistemas y Órganos</h3>
+        <div class="list-group">
+          <div class="list-group-item" *ngFor="let sistema of tejidosArray[0]?.sistemas" (click)="selectCategory(sistema)">
+            {{ sistema }}
+          </div>
+        </div>
+      </div>
     </div>
   </section>
   <section class="base">

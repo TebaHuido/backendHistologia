@@ -1,40 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule] // Asegúrate de importar ReactiveFormsModule aquí
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  onSubmit() {
-    if (this.loginForm.invalid) {
-      return;
-    }
+  ngOnInit(): void {}
 
-    const { email, password } = this.loginForm.value;
-    
-    // Aquí puedes hacer una solicitud POST a tu backend
-    this.http.post('http://localhost:3000/login', { email, password }).subscribe(
-      response => {
-        console.log('Inicio de sesión exitoso', response);
-      },
-      error => {
-        console.error('Error al iniciar sesión', error);
-      }
-    );
+  onSubmit(): void {
+    if (this.loginForm.valid) {
+      const { username, password } = this.loginForm.value;
+      this.authService.login(username, password).subscribe(
+        (response) => {
+          this.authService.setUser(response);
+          this.router.navigate(['/']);
+        },
+        (error) => {
+          console.error('Login failed', error);
+        }
+      );
+    }
   }
 }

@@ -7,10 +7,12 @@ from rest_framework import viewsets, generics ,status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 # Importa los modelos que serán utilizados en las vistas
 from .models import (
     Profesor, Curso, Ayudante, Categoria, Sistema, Organo, 
-    Muestra, Lote, Alumno, Captura, Notas, Tag, Tincion
+    Muestra, Lote, Alumno, Captura, Notas, Tag, Tincion, CustomUser
 )
 
 # Importa los serializers para transformar los datos en formatos adecuados para la API
@@ -18,8 +20,11 @@ from .serializer import (
     MuestraSerializer2, NotaSerializer, CapturaSerializer, ProfesorSerializer, 
     CursoSerializer, AyudanteSerializer, CategoriaSerializer, SistemaSerializer, 
     OrganoSerializer, MuestraSerializer, LoteSerializer, AlumnoSerializer,
-    TincionSerializer, TagsSerializer
+    TincionSerializer, TagsSerializer, UserSerializer, ProfesorCreateSerializer
 )
+
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsProfesor
 
 # Vista genérica para recuperar el detalle de una muestra específica por ID
 class FilterView(APIView):
@@ -58,14 +63,9 @@ class MuestraViewSet(viewsets.ModelViewSet):
     serializer_class = MuestraSerializer
 
     def create(self, request, *args, **kwargs):
-        # Crear instancia del serializador con los datos recibidos
         serializer = self.get_serializer(data=request.data)
-
-        # Validar los datos
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        # Guardar los datos si son válidos
         self.perform_create(serializer)
 
         # Devolver la respuesta con los datos creados
@@ -187,6 +187,25 @@ class NotasViewSet(viewsets.ModelViewSet):
     queryset = Notas.objects.all()
     serializer_class = NotaSerializer
 
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        alumno_id = data.get('alumno')
+        if not alumno_id:
+            return Response({'error': 'Alumno ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        alumno = get_object_or_404(Alumno, id=alumno_id)
+        data['alumno'] = alumno.id
+
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Notas.objects.filter(alumno=user)
+
 class TincionViewSet(viewsets.ModelViewSet):
     queryset = Tincion.objects.all()
     serializer_class = TincionSerializer
@@ -218,3 +237,25 @@ class MuestraFilterAPIView(generics.ListAPIView):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            user_data = UserSerializer(user).data
+            return Response({'message': 'Login successful', 'user': user_data}, status=status.HTTP_200_OK)
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+class ProfesorCreateView(generics.CreateAPIView):
+    queryset = Profesor.objects.all()
+    serializer_class = ProfesorCreateSerializer
+
+class UplimageView(APIView):
+    permission_classes = [IsAuthenticated, IsProfesor]
+
+    def post(self, request, *args, **kwargs):
+        # Lógica para manejar la subida de imágenes
+        pass

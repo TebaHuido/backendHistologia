@@ -11,4 +11,4 @@ services:
     volumes:
       - ./django/db:/usr/src/app/django/db
       - ./images:/usr/share/nginx/html/images
-    mem_limit: 3G
+    mem_limit: 5G
