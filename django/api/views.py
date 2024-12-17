@@ -196,35 +196,72 @@ class CapturaViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CapturaSerializer
 
 # Vista para manejar notas (CRUD completo)
-from rest_framework import viewsets
-from .models import Notas
-from .serializer import NotaSerializer
-
 class NotaViewSet(viewsets.ModelViewSet):
-    queryset = Notas.objects.all()
+    queryset = Notas.objects.all().select_related('alumno', 'profesor', 'muestra').prefetch_related('tags')
     serializer_class = NotaSerializer
 
     def perform_create(self, serializer):
-        serializer.save(alumno=self.request.user)
+        user = self.request.user
+        if user.is_alumno:
+            serializer.save(alumno=user)
+        elif user.is_profesor:
+            serializer.save(profesor=user)
+        else:
+            raise serializers.ValidationError("User must be either an alumno or a profesor")
 
     def create(self, request, *args, **kwargs):
-        data = request.data.copy()
-        alumno_id = data.get('alumno')
-        if not alumno_id:
-            return Response({'error': 'Alumno ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        alumno = get_object_or_404(Alumno, id=alumno_id)
-        data['alumno'] = alumno.id
+        data = request.data.get('nota', {})  # Ensure the data is wrapped in a 'nota' key
+        user = request.user
 
-        serializer = self.get_serializer(data=data)
+        if user.is_alumno:
+            data['alumno'] = user.id
+        elif user.is_profesor:
+            data['profesor'] = user.id
+        else:
+            return Response({'error': 'User must be either an alumno or a profesor'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Desempaqueta los datos de la nota
+        nota_data = {
+            'titulo': data.get('titulo', ''),
+            'cuerpo': data.get('cuerpo', ''),
+            'alumno': data.get('alumno'),
+            'profesor': data.get('profesor'),
+            'muestra': data.get('muestra')
+        }
+
+        serializer = self.get_serializer(data=nota_data)
         if serializer.is_valid():
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = request.data.get('nota', {})  # Ensure the data is wrapped in a 'nota' key
+
+        # Desempaqueta los datos de la nota
+        nota_data = {
+            'titulo': data.get('titulo', ''),
+            'cuerpo': data.get('cuerpo', ''),
+            'alumno': data.get('alumno'),
+            'profesor': data.get('profesor'),
+            'muestra': data.get('muestra')
+        }
+
+        serializer = self.get_serializer(instance, data=nota_data, partial=partial)
+        if serializer.is_valid():
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def get_queryset(self):
         user = self.request.user
-        return Notas.objects.filter(alumno=user)
+        if user.is_alumno:
+            return Notas.objects.filter(alumno=user).select_related('alumno', 'profesor', 'muestra').prefetch_related('tags')
+        elif user.is_profesor:
+            return Notas.objects.filter(profesor=user).select_related('alumno', 'profesor', 'muestra').prefetch_related('tags')
+        return Notas.objects.none()
 
 class TincionViewSet(viewsets.ModelViewSet):
     queryset = Tincion.objects.all()

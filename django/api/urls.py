@@ -5,7 +5,7 @@ from .views import LoginView, NotaViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = DefaultRouter()
-router.register(r'notas', views.NotasViewSet, basename='notas')
+router.register(r'notas', views.NotaViewSet, basename='notas')
 router.register(r'profesores', views.ProfesorViewSet, basename='profesores')
 router.register(r'cursos', views.CursoViewSet, basename='cursos')
 router.register(r'ayudantes', views.AyudanteViewSet, basename='ayudantes')
@@ -17,7 +17,6 @@ router.register(r'muestra_alt', views.MuestraViewSet2, basename='muestra2')
 router.register(r'lotes', views.LoteViewSet, basename='lotes')
 router.register(r'alumnos', views.AlumnoViewSet, basename='alumnos')
 router.register(r'tinciones', views.TincionViewSet, basename='tinciones')
-router.register(r'notas', NotaViewSet)
 
 urlpatterns = [
     path('filters/', views.FilterView.as_view(), name='filters'),

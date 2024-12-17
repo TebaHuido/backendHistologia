@@ -1,4 +1,6 @@
 from django.utils.deprecation import MiddlewareMixin
+from django.middleware.csrf import CsrfViewMiddleware
+from django.utils.decorators import decorator_from_middleware
 from django.contrib.auth import get_user_model
 from django.conf import settings
 import jwt

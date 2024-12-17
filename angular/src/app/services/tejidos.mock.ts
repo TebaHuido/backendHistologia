@@ -20,13 +20,15 @@ export interface Muestra {
     }[];
     notas: {
         id: number;
-        nota: string;
+        titulo: string;
+        cuerpo: string;
+        muestra: number[];
     }[];
     sistemas: string[];
 }
 export interface Tejido {
     capturas: { id: number; name: string; image: string; }[];
-    notas: { id: number; nota: string; }[];
+    notas: { id: number; titulo: string; cuerpo: string; muestra: number[]; }[];
     sistemas: string[];
     id: number;
     name: string;
@@ -35,7 +37,7 @@ export interface Tejido {
     organo: number[];
     sistema: string;
     imagenUrl: string;
-  }
+}
 export const tejidosArray: ITejido[] = [
     {
         id: 1,

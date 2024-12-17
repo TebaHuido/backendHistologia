@@ -2,40 +2,58 @@
   <section class="sidebar">
     <button class="toggle-button" (click)="toggleSidebar()">☰</button>
     <div class="sidebar-content" [class.collapsed]="isSidebarCollapsed">
-      <div class="section">
-        <h3>Imágenes</h3>
-        <div class="list-group">
-          <div class="list-group-item" *ngFor="let captura of tejidosArray[0]?.capturas" (click)="seleccionarImagen(captura)">
-            {{ captura.name }}
+      <div *ngIf="isLoading">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+      <div *ngIf="!isLoading">
+        <div *ngIf="!isEditingNota">
+          <div class="section">
+            <h3>Imágenes</h3>
+            <div class="list-group">
+              <div class="list-group-item" *ngFor="let captura of tejidosArray[0]?.capturas" (click)="seleccionarImagen(captura)">
+                {{ captura.name }}
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Notas</h3>
+            <div class="list-group">
+              <div class="list-group-item" *ngFor="let nota of tejidosArray[0]?.notas" (click)="editNota(nota)">
+                {{ nota.titulo }}
+              </div>
+            </div>
+            <button (click)="startAddNota()">Agregar Nota</button>
+          </div>
+
+          <div class="section">
+            <h3>Sistemas y Órganos</h3>
+            <div class="list-group">
+              <div class="list-group-item" *ngFor="let sistema of tejidosArray[0]?.sistemas" (click)="selectCategory(sistema)">
+                {{ sistema }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isEditingNota">
+          <div class="section">
+            <h3>{{ newNota.id ? 'Editar Nota' : 'Agregar Nota' }}</h3>
+            <form (ngSubmit)="saveNota()">
+              <input [(ngModel)]="newNota.titulo" name="titulo" placeholder="Título" required />
+              <textarea [(ngModel)]="newNota.cuerpo" name="cuerpo" placeholder="Cuerpo" required></textarea>
+              <button type="submit">{{ newNota.id ? 'Actualizar' : 'Guardar' }}</button>
+              <button type="button" (click)="isEditingNota = false">Cancelar</button>
+            </form>
           </div>
         </div>
       </div>
-
-      <div class="section">
-        <h3>Notas</h3>
-        <div class="list-group">
-          <div class="list-group-item" *ngFor="let nota of tejidosArray[0]?.notas" (click)="selectCategory(nota.nota)">
-            {{ nota.nota }}
-          </div>
-        </div>
-        <form (ngSubmit)="addNota()">
-          <textarea [(ngModel)]="newNota" name="newNota" placeholder="Escribe una nueva nota"></textarea>
-          <input type="hidden" name="csrfmiddlewaretoken" [value]="getCSRFToken()">
-          <button type="submit">Agregar Nota</button>
-        </form>
-      </div>
-
-      <div class="section">
-        <h3>Sistemas y Órganos</h3>
-        <div class="list-group">
-          <div class="list-group-item" *ngFor="let sistema of tejidosArray[0]?.sistemas" (click)="selectCategory(sistema)">
-            {{ sistema }}
-          </div>
-        </div>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
       </div>
     </div>
   </section>
   <section class="base">
-    <app-imagen-zoom [imageUrl]="imagenSeleccionada?.image" [initialLabels]="initialLabels"></app-imagen-zoom>
+    <app-imagen-zoom [imageUrl]="imagenSeleccionada?.image" [initialLabels]="initialLabels" [centerImage]="true"></app-imagen-zoom>
   </section>
 </div>

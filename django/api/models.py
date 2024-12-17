@@ -135,9 +135,6 @@ class Lote(models.Model):
 class Alumno(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name="Nombre")
-    # Elimina los campos passhash y correo
-    # passhash = models.CharField(max_length=100, verbose_name="Hash")
-    # correo = models.CharField(max_length=100, verbose_name="Correo")
     curso = models.ManyToManyField(Curso, blank=True)
     permiso = models.ManyToManyField(Muestra, blank=True)
 
@@ -156,16 +153,17 @@ def delete_image(sender, instance, **kwargs):
                 print(f"Error al eliminar la imagen {image_path}: {e}")
 
 class Notas(models.Model):
-    nota = models.CharField(max_length=1500, verbose_name="Nota")
-    alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)  # Update relation
+    titulo = models.CharField(max_length=255, verbose_name="Título")  # Nuevo campo
+    cuerpo = models.TextField(verbose_name="Cuerpo")  # Nuevo campo
+    alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='alumno_notas')
+    profesor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='profesor_notas')
     ayudante = models.ForeignKey(Ayudante, on_delete=models.SET_NULL, null=True, blank=True)
-    profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True)
     public = models.BooleanField(default=False)
-    muestra = models.ManyToManyField(Muestra, blank=True)
+    muestra = models.ForeignKey(Muestra, blank=True, on_delete=models.SET_NULL, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
-        return f"Nota: {self.nota} ({self.alumno} - {self.muestra})"
+        return f"Nota: {self.titulo} ({self.alumno or self.profesor} - {self.muestra})"
 
     class Meta:
         verbose_name = "Nota"

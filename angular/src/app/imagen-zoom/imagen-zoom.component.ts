@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,9 +8,10 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
 })
-export class ImagenZoomComponent implements OnInit {
+export class ImagenZoomComponent implements OnInit, AfterViewInit {
   @Input() imageUrl?: string;
   @Input() initialLabels: { x: number; y: number }[] = [];
+  @Input() centerImage: boolean = false;
 
   scale: number = 1;
   labels: { x: number; y: number }[] = [];
@@ -32,6 +33,9 @@ export class ImagenZoomComponent implements OnInit {
 
   ngOnInit(): void {
     this.labels = this.initialLabels?.length ? [...this.initialLabels] : [];
+  }
+
+  ngAfterViewInit(): void {
     this.resetZoom();
   }
 

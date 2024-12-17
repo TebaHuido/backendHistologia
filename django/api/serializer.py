@@ -73,8 +73,6 @@ class CapturaSerializer(serializers.ModelSerializer):
         full_url = f"{server_url}{relative_url}"
         return full_url
 
-
-
 class MuestraSerializer(serializers.ModelSerializer):
     imagenUrl = serializers.SerializerMethodField()  # Para incluir la URL de la imagen
     categoria = serializers.ListField(
@@ -181,8 +179,6 @@ class MuestraSerializer(serializers.ModelSerializer):
                 sistemas.append({'sistema': sistema.name, 'organo': organo.name})
         return sistemas if sistemas else []
 
-
-
 class LoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lote
@@ -196,11 +192,9 @@ class AlumnoSerializer(serializers.ModelSerializer):
         fields = ['user', 'name', 'curso', 'permiso']
 
 class NotaSerializer(serializers.ModelSerializer):
-    alumno = serializers.PrimaryKeyRelatedField(queryset=Alumno.objects.all())
-
     class Meta:
         model = Notas
-        fields = ('id', 'nota', 'alumno')  # Ajusta según tus necesidades
+        fields = ['id', 'titulo', 'cuerpo', 'muestra', 'alumno', 'profesor']
 
 class MuestraSerializer2(serializers.ModelSerializer):
     capturas = serializers.SerializerMethodField()

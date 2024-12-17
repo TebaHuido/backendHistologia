@@ -31,6 +31,10 @@ export class ApiService {
     return this.http.post<any>(`${this.baseUrl}/notas/`, nota, { headers, ...options });
   }
 
+  updateNota(id: number, nota: any, headers: HttpHeaders): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/notas/${id}/`, nota, { headers });
+  }
+
   updateSample(id: number, sample: any, headers: HttpHeaders): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}/samples/${id}/`, sample, { headers });
   }
