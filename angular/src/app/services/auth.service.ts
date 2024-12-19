@@ -95,4 +95,9 @@ export class AuthService {
       })
     );
   }
+
+  isProfesor(): boolean {
+    const user = this.getUser();
+    return user ? user.is_profesor : false;
+  }
 }
