@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from api import views
-from .views import LoginView, NotaViewSet
+from .views import LoginView, NotaViewSet, UploadXlsView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = DefaultRouter()
@@ -26,6 +26,8 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('profesores/create/', views.ProfesorCreateView.as_view(), name='profesor-create'),
     path('uplimage/', views.UplimageView.as_view(), name='uplimage'),
+    path('cursos/', views.CursoViewSet.as_view({'get': 'list', 'post': 'create'}), name='cursos'),
+    path('upload-xls/', UploadXlsView.as_view(), name='upload-xls'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),

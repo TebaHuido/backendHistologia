@@ -68,6 +68,10 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
 ]
 
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False  # Ensure this is set to False for local development
+
 CORS_ALLOW_CREDENTIALS = True
 
 # Configuración de autenticación

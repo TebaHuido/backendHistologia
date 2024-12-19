@@ -38,4 +38,18 @@ export class ApiService {
   updateSample(id: number, sample: any, headers: HttpHeaders): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}/samples/${id}/`, sample, { headers });
   }
+
+  uploadXls(file: File, headers: HttpHeaders): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.baseUrl}/upload-xls/`, formData, { headers, withCredentials: true });
+  }
+
+  getCursos(headers: HttpHeaders): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/cursos/`, { headers });
+  }
+
+  getAlumnos(headers: HttpHeaders): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/alumnos/`, { headers });
+  }
 }

@@ -179,4 +179,9 @@ export class ImagenZoomComponent implements OnInit, AfterViewInit {
     this.labels.push({ x, y });
     this.cdr.detectChanges();
   }
+
+  resetLabels(): void {
+    this.labels = [];
+    this.cdr.detectChanges();
+  }
 }

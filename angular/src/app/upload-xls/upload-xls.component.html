@@ -1,0 +1,19 @@
+<div class="upload-container">
+  <h2>Subir Archivo XLS</h2>
+  <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+    <input type="file" (change)="onFileChange($event)" />
+    <button type="submit">Subir</button>
+  </form>
+
+  <div class="debug-info">
+    <h3>Lista de Cursos</h3>
+    <ul>
+      <li *ngFor="let curso of cursos">{{ curso.asignatura }}</li>
+    </ul>
+
+    <h3>Lista de Alumnos</h3>
+    <ul>
+      <li *ngFor="let alumno of alumnos">{{ alumno.name }}</li>
+    </ul>
+  </div>
+</div>

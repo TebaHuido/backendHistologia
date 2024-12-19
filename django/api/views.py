@@ -33,6 +33,7 @@ from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
+from .utils import create_alumnos_from_xls  # Ensure this import is present
 
 logger = logging.getLogger(__name__)
 
@@ -333,3 +334,29 @@ class UplimageView(APIView):
     def post(self, request, *args, **kwargs):
         # Lógica para manejar la subida de imágenes
         pass
+
+class CursoViewSet(viewsets.ModelViewSet):
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer
+
+class UploadXlsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        file = request.FILES.get('file')
+        if file:
+            try:
+                result = create_alumnos_from_xls(file)
+                csrf_token = get_token(request)
+                response = Response({
+                    "message": "File processed successfully",
+                    "curso": result["curso"],
+                    "curso_created": result["curso_created"],
+                    "created_alumnos": result["created_alumnos"],
+                    "existing_alumnos": result["existing_alumnos"]
+                }, status=status.HTTP_200_OK)
+                response.set_cookie('csrftoken', csrf_token, httponly=True)
+                return response
+            except ValueError as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)

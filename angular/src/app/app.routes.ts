@@ -9,6 +9,7 @@ import { TissueviewerComponent } from './tissueviewer/tissueviewer.component';
 import { ImageProcessorComponent } from './image-processor/image-processor.component';
 import { TestingviewComponent } from './testingview/testingview.component';
 import { FilterComponent } from './filter/filter.component';
+import { UploadXlsComponent } from './upload-xls/upload-xls.component';
 import { AuthGuard } from './services/auth.guard'; // Asegúrate de importar el AuthGuard
 
 export const routes: Routes = [
@@ -22,5 +23,7 @@ export const routes: Routes = [
     { path: 'tissueviewer', component: TissueviewerComponent, canActivate: [AuthGuard] },
     { path: 'playground', component: ImageProcessorComponent, canActivate: [AuthGuard] },
     { path: 'test', component: FilterComponent, canActivate: [AuthGuard] },
-    { path: 'login', component: LoginComponent }
+    { path: 'login', component: LoginComponent },
+    { path: 'testing', component: TestingviewComponent, canActivate: [AuthGuard] },
+    { path: 'upload-xls', component: UploadXlsComponent, canActivate: [AuthGuard] },
 ];

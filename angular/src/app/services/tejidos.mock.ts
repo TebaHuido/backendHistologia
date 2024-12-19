@@ -43,6 +43,7 @@ export const tejidosArray: ITejido[] = [
         id: 1,
         nombre: 'Tejido 1',
         category: 'pectoral',
+        descripcion: 'Descripción del Tejido 1', // New property
         imagenUrl: 'https://concepto.de/wp-content/uploads/2019/04/histolog%C3%ADa-tejido-humano-e1554756738822.jpg',
         alt: 'Tejido 1'
     },
@@ -50,6 +51,7 @@ export const tejidosArray: ITejido[] = [
         id: 2,
         nombre: 'Tejido 2',
         category: 'pectoral',
+        descripcion: 'Descripción del Tejido 2', // New property
         imagenUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4A-NNkm3XUyTtIe3IVMfdwDoRdBQwABmSFw&s',
         alt: 'Tejido 2'
     },
@@ -57,6 +59,7 @@ export const tejidosArray: ITejido[] = [
         id: 3,
         nombre: 'Tejido 3',
         category: 'facial',
+        descripcion: 'Descripción del Tejido 3', // New property
         imagenUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt0U78bpB4eGgzhoQpmhniTlGPykhu_Tueiw&s',
         alt: 'Tejido 3'
     },
@@ -64,6 +67,7 @@ export const tejidosArray: ITejido[] = [
         id: 4,
         nombre: 'Tejido 4',
         category: 'facial',
+        descripcion: 'Descripción del Tejido 4', // New property
         imagenUrl: 'https://www.pathologylive.com/practicas-histologia/images/11.jpg',
         alt: 'Tejido 4'
     },
